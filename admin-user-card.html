@@ -1,0 +1,825 @@
+<!-- Add this section to your admin.html -->
+<div id="adminCardCreation" class="section">
+    <style>
+        /* Admin Card Creation Styles */
+        #adminCardCreation .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        #adminCardCreation .admin-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #dc3545;
+        }
+
+        #adminCardCreation .admin-header h1 {
+            color: #dc3545;
+            margin-bottom: 10px;
+        }
+
+        #adminCardCreation .card-creation-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+
+        #adminCardCreation .form-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid #dc3545;
+        }
+
+        #adminCardCreation .form-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #dc3545;
+            margin-bottom: 20px;
+        }
+
+        #adminCardCreation .form-group {
+            margin-bottom: 20px;
+        }
+
+        #adminCardCreation .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        #adminCardCreation .form-group input,
+        #adminCardCreation .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        #adminCardCreation .form-group input:focus,
+        #adminCardCreation .form-group select:focus {
+            outline: none;
+            border-color: #dc3545;
+            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+        }
+
+        #adminCardCreation .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        #adminCardCreation .card-type-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        #adminCardCreation .card-type-option {
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        #adminCardCreation .card-type-option:hover {
+            border-color: #dc3545;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        #adminCardCreation .card-type-option.selected {
+            border-color: #dc3545;
+            background: #dc3545;
+            color: white;
+        }
+
+        #adminCardCreation .pin-input {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        #adminCardCreation .pin-digit {
+            width: 50px;
+            height: 50px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            background: white;
+        }
+
+        #adminCardCreation .pin-digit:focus {
+            border-color: #dc3545;
+            outline: none;
+        }
+
+        #adminCardCreation .auto-generated {
+            background: #e8f4fd;
+            border: 2px solid #b8daff;
+        }
+
+        #adminCardCreation .auto-generated-label {
+            font-size: 12px;
+            color: #0056b3;
+            margin-top: 5px;
+        }
+
+        #adminCardCreation .buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        #adminCardCreation .btn {
+            flex: 1;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #adminCardCreation .btn-preview {
+            background: #6c757d;
+            color: white;
+        }
+
+        #adminCardCreation .btn-preview:hover {
+            background: #545b62;
+            transform: translateY(-2px);
+        }
+
+        #adminCardCreation .btn-create {
+            background: #dc3545;
+            color: white;
+        }
+
+        #adminCardCreation .btn-create:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        #adminCardCreation .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Card Preview Styles - WITH FLIP */
+        #adminCardCreation .card-preview-section {
+            position: sticky;
+            top: 20px;
+        }
+
+        #adminCardCreation .card-preview-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        #adminCardCreation .flip-card {
+            background-color: transparent;
+            width: 350px;
+            height: 220px;
+            margin: 0 auto;
+            perspective: 1000px;
+        }
+
+        #adminCardCreation .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+        }
+
+        #adminCardCreation .flip-card:hover .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        #adminCardCreation .flip-card-front, 
+        #adminCardCreation .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        }
+
+        #adminCardCreation .flip-card-back {
+            transform: rotateY(180deg);
+        }
+
+        #adminCardCreation .card.visa {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        }
+
+        #adminCardCreation .card.mastercard {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+        }
+
+        #adminCardCreation .card-content {
+            padding: 20px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            color: white;
+        }
+
+        #adminCardCreation .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #adminCardCreation .bank-info h3 {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        #adminCardCreation .bank-info p {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        #adminCardCreation .card-type-logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        #adminCardCreation .card-number {
+            font-size: 22px;
+            font-weight: 500;
+            letter-spacing: 2px;
+            font-family: 'Courier New', monospace;
+            margin: 20px 0;
+        }
+
+        #adminCardCreation .card-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        #adminCardCreation .card-holder {
+            flex: 1;
+        }
+
+        #adminCardCreation .card-holder-label {
+            font-size: 10px;
+            opacity: 0.7;
+            margin-bottom: 5px;
+        }
+
+        #adminCardCreation .card-holder-name {
+            font-size: 14px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        #adminCardCreation .card-expiry {
+            text-align: right;
+        }
+
+        #adminCardCreation .card-expiry-label {
+            font-size: 10px;
+            opacity: 0.7;
+            margin-bottom: 5px;
+        }
+
+        #adminCardCreation .card-expiry-date {
+            font-size: 14px;
+            font-weight: 500;
+            font-family: 'Courier New', monospace;
+        }
+
+        #adminCardCreation .chip {
+            position: absolute;
+            top: 60px;
+            left: 30px;
+            width: 40px;
+            height: 30px;
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            border-radius: 5px;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+
+        #adminCardCreation .chip::before {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            right: 5px;
+            bottom: 5px;
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            border-radius: 2px;
+        }
+
+        /* Card Back Styles */
+        #adminCardCreation .card-back-content {
+            padding: 20px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            color: white;
+        }
+
+        #adminCardCreation .magnetic-strip {
+            background: #000;
+            height: 40px;
+            width: 100%;
+            margin: 20px 0;
+        }
+
+        #adminCardCreation .signature-panel {
+            background: #fff;
+            height: 35px;
+            width: 70%;
+            margin: 10px 0;
+            border-radius: 3px;
+            position: relative;
+        }
+
+        #adminCardCreation .cvv-section {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            text-align: center;
+        }
+
+        #adminCardCreation .cvv-label {
+            font-size: 10px;
+            opacity: 0.7;
+            margin-bottom: 5px;
+        }
+
+        #adminCardCreation .cvv-number {
+            font-size: 18px;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+        }
+
+        #adminCardCreation .back-info {
+            font-size: 10px;
+            opacity: 0.8;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        #adminCardCreation .flip-instruction {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* Loading animation */
+        #adminCardCreation .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #dc3545;
+            border-radius: 50%;
+            animation: adminSpin 1s linear infinite;
+        }
+
+        @keyframes adminSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+      
+/* Responsive */
+@media (max-width: 768px) {
+    /* --- Card creation layout --- */
+    #adminCardCreation .card-creation-wrapper {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    #adminCardCreation .flip-card {
+        width: 100%;
+        max-width: 350px;
+    }
+    
+    #adminCardCreation .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    /* --- Card number smaller --- */
+    #adminCardCreation .card-number {
+        font-size: 16px;
+        letter-spacing: 2px;
+        margin-bottom: 42px;
+    }
+
+    /* --- Card bottom (holder + expiry row) --- */
+    #adminCardCreation .card-bottom {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        margin-top: 0px;
+        margin-bottom: 42px;
+    }
+
+    #adminCardCreation .card-holder,
+    #adminCardCreation .card-expiry {
+        flex: 1;
+        min-width: 0;
+    }
+
+    #adminCardCreation .card-holder-name,
+    #adminCardCreation .card-expiry-date {
+        font-size: 12px;
+        line-height: 1.3;
+        color: #fff;
+        white-space: nowrap;
+    }
+
+    /* --- Visa / Master selection buttons --- */
+    #adminCardCreation .card-type-option {
+        padding: 5px;
+        font-size: 7px;
+    }
+
+    /* --- Preview / Create buttons --- */
+    #adminCardCreation .btn {
+        padding: 6px 10px;
+        font-size: 10px;
+    }
+}
+
+
+
+
+    </style>
+
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>🔧 Admin Card Creation</h1>
+            <p>Create cards for users with admin privileges</p>
+        </div>
+
+        <div class="card-creation-wrapper">
+            <div class="form-section">
+                <h2 class="form-title">Create Card for User</h2>
+                
+                <form id="adminCardCreationForm">
+                    <div class="form-group">
+                        <label for="adminUserEmail">User Email</label>
+                        <input type="email" id="adminUserEmail" name="userEmail" placeholder="Enter user's email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="adminCardHolderName">Cardholder Name</label>
+                        <input type="text" id="adminCardHolderName" name="cardHolderName" placeholder="Enter cardholder's full name" required maxlength="25">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Card Type</label>
+                        <div class="card-type-selector">
+                            <div class="card-type-option admin-card-type" data-type="visa">
+                                <div style="font-size: 20px; font-weight: bold; color: #1a1f71;">VISA</div>
+                            </div>
+                            <div class="card-type-option admin-card-type" data-type="mastercard">
+                                <div style="font-size: 18px; font-weight: bold; color: #eb001b;">MasterCard</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>4-Digit Transaction PIN</label>
+                        <div class="pin-input">
+                            <input type="password" class="pin-digit admin-pin-digit" maxlength="1" pattern="[0-9]">
+                            <input type="password" class="pin-digit admin-pin-digit" maxlength="1" pattern="[0-9]">
+                            <input type="password" class="pin-digit admin-pin-digit" maxlength="1" pattern="[0-9]">
+                            <input type="password" class="pin-digit admin-pin-digit" maxlength="1" pattern="[0-9]">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="adminCardNumber">Card Number</label>
+                            <input type="text" id="adminCardNumber" name="cardNumber" class="auto-generated" readonly>
+                            <div class="auto-generated-label">Auto-generated</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="adminCvv">CVV</label>
+                            <input type="text" id="adminCvv" name="cvv" class="auto-generated" readonly>
+                            <div class="auto-generated-label">Auto-generated</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="adminExpiryDate">Expiry Date</label>
+                        <input type="text" id="adminExpiryDate" name="expiryDate" class="auto-generated" readonly>
+                        <div class="auto-generated-label">Auto-generated (2 years from now)</div>
+                    </div>
+
+                    <div class="buttons">
+                        <button type="button" class="btn btn-preview" onclick="previewAdminCard()">👁️ Preview Card</button>
+                        <button type="submit" class="btn btn-create">🚀 Create Card for User</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card-preview-section">
+                <h3 class="card-preview-title">💳 Admin Card Preview</h3>
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <!-- Front of Card -->
+                        <div class="flip-card-front card visa" id="adminCardPreviewFront">
+                            <div class="chip"></div>
+                            <div class="card-content">
+                                <div class="card-top">
+                                    <div class="bank-info">
+                                        <h3>PVB BANK</h3>
+                                        <p>Your trusted partner</p>
+                                    </div>
+                                    <div class="card-type-logo" id="adminCardTypeLogo">VISA</div>
+                                </div>
+                                <div class="card-number" id="adminPreviewCardNumber">●●●● ●●●● ●●●● ●●●●</div>
+                                <div class="card-bottom">
+                                    <div class="card-holder">
+                                        <div class="card-holder-label">CARD HOLDER</div>
+                                        <div class="card-holder-name" id="adminPreviewCardHolder">USER NAME HERE</div>
+                                    </div>
+                                    <div class="card-expiry">
+                                        <div class="card-expiry-label">VALID THRU</div>
+                                        <div class="card-expiry-date" id="adminPreviewExpiry">MM/YY</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Back of Card -->
+                        <div class="flip-card-back card visa" id="adminCardPreviewBack">
+                            <div class="card-back-content">
+                                <div class="magnetic-strip"></div>
+                                <div style="position: relative;">
+                                    <div class="signature-panel"></div>
+                                    <div class="cvv-section">
+                                        <div class="cvv-label">CVV</div>
+                                        <div class="cvv-number" id="adminPreviewCVV">***</div>
+                                    </div>
+                                </div>
+                                <div class="back-info">
+                                    <p>PVB Bank - Customer Service: support@pvbonline.online</p>
+                                    <p>For assistance call: +1-800-PVB-BANK</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flip-instruction">Hover over card to see back</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Admin Card Creation JavaScript
+        let adminSelectedCardType = 'visa';
+
+        function initializeAdminCardCreation() {
+            console.log('Initializing admin card creation...');
+            
+            // Admin card type selection
+            document.querySelectorAll('.admin-card-type').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.admin-card-type').forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    adminSelectedCardType = this.dataset.type;
+                    updateAdminCardPreview();
+                    generateAdminCardDetails();
+                });
+            });
+
+            // PIN input handling - Admin
+            setupAdminPinInputs('.admin-pin-digit');
+
+            // Real-time name updates
+            document.getElementById('adminCardHolderName').addEventListener('input', updateAdminCardPreview);
+
+            // Set initial selection
+            document.querySelector('.admin-card-type[data-type="visa"]').classList.add('selected');
+
+            // Generate initial details
+            generateAdminCardDetails();
+
+            // Form submission
+            const adminCardCreationForm = document.getElementById('adminCardCreationForm');
+            if (adminCardCreationForm) {
+                adminCardCreationForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    if (!validateAdminForm()) return;
+
+                    const formData = {
+                        userEmail: document.getElementById('adminUserEmail').value,
+                        cardHolderName: document.getElementById('adminCardHolderName').value,
+                        cardType: adminSelectedCardType,
+                        cardNumber: document.getElementById('adminCardNumber').value.replace(/\s/g, ''),
+                        cvv: document.getElementById('adminCvv').value,
+                        expiryDate: document.getElementById('adminExpiryDate').value,
+                        transactionPin: getAdminPin('.admin-pin-digit')
+                    };
+
+                    const submitButton = e.target.querySelector('button[type="submit"]');
+                    const originalText = submitButton.innerHTML;
+                    submitButton.innerHTML = '<span class="loading"></span> Creating Card...';
+                    submitButton.disabled = true;
+
+                    try {
+                        const response = await fetch('https://valley.pvbonline.online/api/admin/create-card', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+                            },
+                            body: JSON.stringify(formData)
+                        });
+
+                        const result = await response.json();
+                        
+                        if (response.ok) {
+                            alert('✅ Card created successfully for user! The card is automatically approved and active.');
+                            adminCardCreationForm.reset();
+                            // Reset selections
+                            document.querySelectorAll('.admin-card-type').forEach(opt => opt.classList.remove('selected'));
+                            document.querySelector('.admin-card-type[data-type="visa"]').classList.add('selected');
+                            adminSelectedCardType = 'visa';
+                            generateAdminCardDetails();
+                            updateAdminCardPreview();
+                        } else {
+                            alert(`❌ Error: ${result.message}`);
+                        }
+                    } catch (error) {
+                        alert('❌ Network error. Please try again.');
+                        console.error('Error:', error);
+                    } finally {
+                        submitButton.innerHTML = originalText;
+                        submitButton.disabled = false;
+                    }
+                });
+            }
+        }
+
+        function setupAdminPinInputs(selector) {
+            const pinInputs = document.querySelectorAll(selector);
+            pinInputs.forEach((input, index) => {
+                input.addEventListener('input', function() {
+                    if (this.value.length === 1 && index < pinInputs.length - 1) {
+                        pinInputs[index + 1].focus();
+                    }
+                });
+
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Backspace' && this.value === '' && index > 0) {
+                        pinInputs[index - 1].focus();
+                    }
+                });
+
+                input.addEventListener('paste', function(e) {
+                    e.preventDefault();
+                    const paste = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 4);
+                    pinInputs.forEach((pinInput, i) => {
+                        pinInput.value = paste[i] || '';
+                    });
+                });
+            });
+        }
+
+        function generateAdminCardNumber(cardType) {
+            let prefix = cardType === 'visa' ? '4' : '5';
+            let cardNumber = prefix;
+            for (let i = 1; i < 16; i++) {
+                cardNumber += Math.floor(Math.random() * 10);
+            }
+            return cardNumber.replace(/(.{4})/g, '$1 ').trim();
+        }
+
+        function generateAdminCVV() {
+            return Math.floor(100 + Math.random() * 900).toString();
+        }
+
+        function generateAdminExpiryDate() {
+            const now = new Date();
+            const futureDate = new Date(now.getFullYear() + 2, now.getMonth());
+            const month = (futureDate.getMonth() + 1).toString().padStart(2, '0');
+            const year = futureDate.getFullYear().toString().slice(-2);
+            return `${month}/${year}`;
+        }
+
+        function generateAdminCardDetails() {
+            document.getElementById('adminCardNumber').value = generateAdminCardNumber(adminSelectedCardType);
+            document.getElementById('adminCvv').value = generateAdminCVV();
+            document.getElementById('adminExpiryDate').value = generateAdminExpiryDate();
+            updateAdminCardPreview();
+        }
+
+        function updateAdminCardPreview() {
+            // Update both front and back
+            const cardFront = document.getElementById('adminCardPreviewFront');
+            const cardBack = document.getElementById('adminCardPreviewBack');
+            
+            // Update card type styling
+            cardFront.className = `flip-card-front card ${adminSelectedCardType}`;
+            cardBack.className = `flip-card-back card ${adminSelectedCardType}`;
+            
+            // Update front elements
+            document.getElementById('adminCardTypeLogo').textContent = adminSelectedCardType === 'visa' ? 'VISA' : 'MasterCard';
+            document.getElementById('adminPreviewCardNumber').textContent = document.getElementById('adminCardNumber').value || '●●●● ●●●● ●●●● ●●●●';
+            document.getElementById('adminPreviewCardHolder').textContent = (document.getElementById('adminCardHolderName').value || 'USER NAME HERE').toUpperCase();
+            document.getElementById('adminPreviewExpiry').textContent = document.getElementById('adminExpiryDate').value || 'MM/YY';
+            
+            // Update back elements
+            document.getElementById('adminPreviewCVV').textContent = document.getElementById('adminCvv').value || '***';
+        }
+
+        function previewAdminCard() {
+            updateAdminCardPreview();
+            const flipCard = document.querySelector('#adminCardCreation .flip-card-inner');
+            flipCard.style.transform = 'rotateY(180deg)';
+            setTimeout(() => {
+                flipCard.style.transform = 'rotateY(0deg)';
+            }, 2000);
+        }
+
+        function getAdminPin(selector) {
+            const pinInputs = document.querySelectorAll(selector);
+            return Array.from(pinInputs).map(input => input.value).join('');
+        }
+
+        function validateAdminForm() {
+            const emailField = document.getElementById('adminUserEmail');
+            const nameField = document.getElementById('adminCardHolderName');
+            const pinInputs = document.querySelectorAll('.admin-pin-digit');
+            
+            if (!emailField.value.trim()) {
+                alert('Please enter the user email');
+                return false;
+            }
+            
+            if (!nameField.value.trim()) {
+                alert('Please enter the cardholder name');
+                return false;
+            }
+
+            const pin = Array.from(pinInputs).map(input => input.value).join('');
+            if (pin.length !== 4) {
+                alert('Please enter a 4-digit PIN');
+                return false;
+            }
+
+            return true;
+        }
+
+        // Initialize when DOM is ready or section is opened
+        document.addEventListener('DOMContentLoaded', function() {
+            if (document.getElementById('adminCardCreation')) {
+                setTimeout(initializeAdminCardCreation, 100);
+            }
+        });
+
+        // Also initialize if section is opened dynamically
+        if (typeof window.openSection === 'function') {
+            const originalOpenSection = window.openSection;
+            window.openSection = function(sectionId) {
+                originalOpenSection(sectionId);
+                if (sectionId === 'adminCardCreation') {
+                    setTimeout(initializeAdminCardCreation, 100);
+                }
+            };
+        }
+
+        // Make functions globally accessible
+        window.previewAdminCard = previewAdminCard;
+        window.initializeAdminCardCreation = initializeAdminCardCreation;
+    </script>
+</div>

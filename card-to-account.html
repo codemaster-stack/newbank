@@ -1,0 +1,867 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card to Account Transfer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group select,
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .balance-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .balance-info p {
+            margin: 5px 0;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .balance-info strong {
+            color: #333;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 10px;
+        }
+
+        .btn-transfer {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-transfer:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+
+        .btn-back {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-back:hover {
+            background: #545b62;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💰 Card to Account Transfer</h1>
+            <p>Transfer funds from your card back to your account</p>
+        </div>
+
+        <div id="message" class="message"></div>
+
+        <form id="transferForm">
+            <div class="form-group">
+                <label for="cardSelect">Select Card</label>
+                <select id="cardSelect" required>
+                    <option value="">Loading cards...</option>
+                </select>
+            </div>
+
+            <div class="balance-info" id="balanceInfo" style="display: none;">
+                <p><strong>Card Balance:</strong> $<span id="cardBalance">0.00</span></p>
+            </div>
+
+            <div class="form-group">
+                <label for="accountType">Transfer to Account</label>
+                <select id="accountType" required>
+                    <option value="">Select account</option>
+                    <option value="savings">Savings Account</option>
+                    <option value="current">Current Account</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="amount">Amount ($)</label>
+                <input type="number" id="amount" step="0.01" min="1" placeholder="Enter amount" required>
+            </div>
+
+            <button type="submit" class="btn btn-transfer">Transfer to Account</button>
+            <button type="button" class="btn btn-back" onclick="window.history.back()">← Back</button>
+        </form>
+    </div>
+
+    <script>
+       const BACKEND_URL = 'https://valley.pvbonline.online';
+let userCards = [];
+
+function showMessage(message, type) {
+    const messageDiv = document.getElementById('message');
+    messageDiv.textContent = message;
+    messageDiv.className = `message ${type}`;
+    messageDiv.style.display = 'block';
+    setTimeout(() => {
+        messageDiv.style.display = 'none';
+    }, 5000);
+}
+
+async function loadUserCards() {
+    try {
+        const response = await fetch(`${BACKEND_URL}/api/users/cards`, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.cards) {
+            userCards = result.cards.filter(card => card.status === 'approved');
+            
+            const cardSelect = document.getElementById('cardSelect');
+            
+            if (userCards.length === 0) {
+                cardSelect.innerHTML = '<option value="">No approved cards found</option>';
+                return;
+            }
+
+            // ✅ FIXED: Use cardBalance instead of balance
+            cardSelect.innerHTML = '<option value="">Select a card</option>' +
+                userCards.map(card => 
+                    `<option value="${card._id}">
+                        ${card.cardType.toUpperCase()} - •••• ${card.cardNumber.slice(-4)} ($${(card.cardBalance || 0).toFixed(2)})
+                    </option>`
+                ).join('');
+        } else {
+            showMessage('Failed to load cards', 'error');
+        }
+    } catch (error) {
+        console.error('Error loading cards:', error);
+        showMessage('Error loading cards', 'error');
+    }
+}
+
+document.getElementById('cardSelect').addEventListener('change', function() {
+    const selectedCard = userCards.find(card => card._id === this.value);
+    const balanceInfo = document.getElementById('balanceInfo');
+    
+    if (selectedCard) {
+        // ✅ FIXED: Use cardBalance instead of balance
+        document.getElementById('cardBalance').textContent = (selectedCard.cardBalance || 0).toFixed(2);
+        balanceInfo.style.display = 'block';
+    } else {
+        balanceInfo.style.display = 'none';
+    }
+});
+
+document.getElementById('transferForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const cardId = document.getElementById('cardSelect').value;
+    const accountType = document.getElementById('accountType').value;
+    const amount = parseFloat(document.getElementById('amount').value);
+
+    if (!cardId || !accountType || !amount) {
+        showMessage('Please fill all fields', 'error');
+        return;
+    }
+
+    if (amount <= 0) {
+        showMessage('Amount must be greater than 0', 'error');
+        return;
+    }
+
+    const selectedCard = userCards.find(card => card._id === cardId);
+    
+    // ✅ FIXED: Use cardBalance instead of balance
+    if (amount > (selectedCard.cardBalance || 0)) {
+        showMessage(`Insufficient card balance. Available: $${(selectedCard.cardBalance || 0).toFixed(2)}`, 'error');
+        return;
+    }
+
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<span class="loading"></span> Processing...';
+    submitBtn.disabled = true;
+
+    try {
+        const response = await fetch(`${BACKEND_URL}/api/users/card-to-account`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({ cardId, accountType, amount })
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            showMessage(`✅ Transfer successful! $${amount.toFixed(2)} transferred to ${accountType} account`, 'success');
+            this.reset();
+            loadUserCards(); // Reload cards to show updated balance
+            document.getElementById('balanceInfo').style.display = 'none';
+            
+            // Optional: Redirect to dashboard after 2 seconds
+            setTimeout(() => {
+                // window.location.href = 'dashboard.html';
+            }, 2000);
+        } else {
+            showMessage(result.message || 'Transfer failed', 'error');
+        }
+    } catch (error) {
+        console.error('Transfer error:', error);
+        showMessage('Network error. Please try again.', 'error');
+    } finally {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    }
+});
+
+document.addEventListener('DOMContentLoaded', loadUserCards);
+    </script>
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card to Account Transfer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group select,
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .balance-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .balance-info p {
+            margin: 5px 0;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .balance-info strong {
+            color: #333;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 10px;
+        }
+
+        .btn-transfer {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-transfer:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+
+        .btn-back {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-back:hover {
+            background: #545b62;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .forgot-pin-link {
+            display: block;
+            text-align: right;
+            margin-top: -10px;
+            margin-bottom: 10px;
+            color: #667eea;
+            font-size: 14px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .forgot-pin-link:hover {
+            text-decoration: underline;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .modal-header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-modal {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-confirm {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-confirm:hover {
+            background: #5a67d8;
+        }
+
+        .btn-cancel {
+            background: #e9ecef;
+            color: #333;
+        }
+
+        .btn-cancel:hover {
+            background: #dee2e6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💰 Card to Account Transfer</h1>
+            <p>Transfer funds from your card back to your account</p>
+        </div>
+
+        <div id="message" class="message"></div>
+
+        <form id="transferForm">
+            <div class="form-group">
+                <label for="cardSelect">Select Card</label>
+                <select id="cardSelect" required>
+                    <option value="">Loading cards...</option>
+                </select>
+            </div>
+
+            <div class="balance-info" id="balanceInfo" style="display: none;">
+                <p><strong>Card Balance:</strong> $<span id="cardBalance">0.00</span></p>
+            </div>
+
+            <div class="form-group">
+                <label for="accountType">Transfer to Account</label>
+                <select id="accountType" required>
+                    <option value="">Select account</option>
+                    <option value="savings">Savings Account</option>
+                    <option value="current">Current Account</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="amount">Amount ($)</label>
+                <input type="number" id="amount" step="0.01" min="1" placeholder="Enter amount" required>
+            </div>
+
+            <div class="form-group">
+                <label for="cardPin">Card PIN</label>
+                <input type="password" id="cardPin" maxlength="4" placeholder="Enter 4-digit PIN" required>
+            </div>
+            <a class="forgot-pin-link" id="forgotPinLink">Forgot PIN?</a>
+
+            <button type="submit" class="btn btn-transfer">Transfer to Account</button>
+            <button type="button" class="btn btn-back" onclick="window.history.back()">← Back</button>
+        </form>
+    </div>
+
+    <!-- Forgot PIN Modal -->
+    <div id="forgotPinModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🔐 Reset Card PIN</h2>
+                <p>Enter a new 4-digit PIN for your card</p>
+            </div>
+
+            <div class="form-group">
+                <label for="newPin">New PIN</label>
+                <input type="password" id="newPin" maxlength="4" placeholder="Enter 4-digit PIN">
+            </div>
+
+            <div class="form-group">
+                <label for="confirmPin">Confirm PIN</label>
+                <input type="password" id="confirmPin" maxlength="4" placeholder="Re-enter PIN">
+            </div>
+
+            <div class="modal-buttons">
+                <button type="button" class="btn-modal btn-cancel" id="cancelResetBtn">Cancel</button>
+                <button type="button" class="btn-modal btn-confirm" id="confirmResetBtn">Reset PIN</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const BACKEND_URL = 'https://valley.pvbonline.online';
+        let userCards = [];
+
+        function showMessage(message, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = message;
+            messageDiv.className = `message ${type}`;
+            messageDiv.style.display = 'block';
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        async function loadUserCards() {
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/users/cards`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.cards) {
+                    userCards = result.cards.filter(card => card.status === 'approved');
+                    
+                    const cardSelect = document.getElementById('cardSelect');
+                    
+                    if (userCards.length === 0) {
+                        cardSelect.innerHTML = '<option value="">No approved cards found</option>';
+                        return;
+                    }
+
+                    cardSelect.innerHTML = '<option value="">Select a card</option>' +
+                        userCards.map(card => 
+                            `<option value="${card._id}">
+                                ${card.cardType.toUpperCase()} - •••• ${card.cardNumber.slice(-4)} ($${(card.cardBalance || 0).toFixed(2)})
+                            </option>`
+                        ).join('');
+                } else {
+                    showMessage('Failed to load cards', 'error');
+                }
+            } catch (error) {
+                console.error('Error loading cards:', error);
+                showMessage('Error loading cards', 'error');
+            }
+        }
+
+        document.getElementById('cardSelect').addEventListener('change', function() {
+            const selectedCard = userCards.find(card => card._id === this.value);
+            const balanceInfo = document.getElementById('balanceInfo');
+            
+            if (selectedCard) {
+                document.getElementById('cardBalance').textContent = (selectedCard.cardBalance || 0).toFixed(2);
+                balanceInfo.style.display = 'block';
+            } else {
+                balanceInfo.style.display = 'none';
+            }
+        });
+
+        // Forgot PIN Modal Logic
+        document.getElementById('forgotPinLink').addEventListener('click', function() {
+            const cardId = document.getElementById('cardSelect').value;
+            if (!cardId) {
+                showMessage('Please select a card first', 'error');
+                return;
+            }
+            document.getElementById('forgotPinModal').classList.add('active');
+        });
+
+        document.getElementById('cancelResetBtn').addEventListener('click', function() {
+            document.getElementById('forgotPinModal').classList.remove('active');
+            document.getElementById('newPin').value = '';
+            document.getElementById('confirmPin').value = '';
+        });
+
+        document.getElementById('confirmResetBtn').addEventListener('click', async function() {
+            const cardId = document.getElementById('cardSelect').value;
+            const newPin = document.getElementById('newPin').value;
+            const confirmPin = document.getElementById('confirmPin').value;
+
+            if (!newPin || !confirmPin) {
+                showMessage('Please fill all fields', 'error');
+                return;
+            }
+
+            if (newPin.length !== 4 || confirmPin.length !== 4) {
+                showMessage('PIN must be 4 digits', 'error');
+                return;
+            }
+
+            if (!/^\d+$/.test(newPin)) {
+                showMessage('PIN must contain only numbers', 'error');
+                return;
+            }
+
+            if (newPin !== confirmPin) {
+                showMessage('PINs do not match', 'error');
+                return;
+            }
+
+            const btn = this;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<span class="loading"></span>';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/users/card-reset-pin`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify({ cardId, newPin })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showMessage('✅ PIN reset successfully!', 'success');
+                    document.getElementById('forgotPinModal').classList.remove('active');
+                    document.getElementById('newPin').value = '';
+                    document.getElementById('confirmPin').value = '';
+                } else {
+                    showMessage(result.message || 'PIN reset failed', 'error');
+                }
+            } catch (error) {
+                console.error('Reset PIN error:', error);
+                showMessage('Network error. Please try again.', 'error');
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        });
+
+        document.getElementById('transferForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const cardId = document.getElementById('cardSelect').value;
+            const accountType = document.getElementById('accountType').value;
+            const amount = parseFloat(document.getElementById('amount').value);
+            const cardPin = document.getElementById('cardPin').value;
+
+            if (!cardId || !accountType || !amount || !cardPin) {
+                showMessage('Please fill all fields', 'error');
+                return;
+            }
+
+            if (cardPin.length !== 4) {
+                showMessage('PIN must be 4 digits', 'error');
+                return;
+            }
+
+            if (amount <= 0) {
+                showMessage('Amount must be greater than 0', 'error');
+                return;
+            }
+
+            const selectedCard = userCards.find(card => card._id === cardId);
+            
+            if (amount > (selectedCard.cardBalance || 0)) {
+                showMessage(`Insufficient card balance. Available: $${(selectedCard.cardBalance || 0).toFixed(2)}`, 'error');
+                return;
+            }
+
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="loading"></span> Processing...';
+            submitBtn.disabled = true;
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/users/card-to-account`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify({ cardId, accountType, amount, cardPin })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showMessage(`✅ Transfer successful! $${amount.toFixed(2)} transferred to ${accountType} account`, 'success');
+                    this.reset();
+                    loadUserCards();
+                    document.getElementById('balanceInfo').style.display = 'none';
+                } else {
+                    showMessage(result.message || 'Transfer failed', 'error');
+                }
+            } catch (error) {
+                console.error('Transfer error:', error);
+                showMessage('Network error. Please try again.', 'error');
+            } finally {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', loadUserCards);
+    </script>
+</body>
+</html>

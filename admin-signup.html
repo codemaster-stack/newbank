@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Auth | PVNBank</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f7fb;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .auth-container {
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #0a2540;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    input:focus {
+      border-color: #007bff;
+      outline: none;
+      box-shadow: 0 0 3px rgba(0,123,255,0.3);
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    .tabs {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+      border-radius: 30px;
+      overflow: hidden;
+      border: 1px solid #007bff;
+    }
+
+    .tabs button {
+      flex: 1;
+      padding: 10px 0;
+      border: none;
+      background: #f5f7fb;
+      cursor: pointer;
+      font-weight: bold;
+      color: #007bff;
+      transition: all 0.3s ease;
+    }
+
+    .tabs button.active {
+      background: #007bff;
+      color: #fff;
+    }
+
+    .tabs button:hover {
+      background: #e0ecff;
+    }
+
+    .form {
+      display: none;
+      animation: fadeSlide 0.5s ease;
+    }
+
+    .form.active {
+      display: block;
+    }
+
+    @keyframes fadeSlide {
+      from {
+        opacity: 0;
+        transform: translateY(15px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+
+
+          button .spinner {
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #555;
+  border-radius: 50%;
+  width: 14px;
+  height: 14px;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 6px;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg);}
+  100% { transform: rotate(360deg);}
+}
+  </style>
+</head>
+<body>
+  <div class="auth-container">
+    <div class="tabs">
+      <button class="tab-btn active" data-target="signupForm">Signup</button>
+      <button class="tab-btn" data-target="loginForm">Login</button>
+      <button class="tab-btn" data-target="forgotForm">Forgot</button>
+    </div>
+
+    <!-- Signup Form -->
+    <form id="signupForm" class="form active">
+      <h2>Create Admin Account</h2>
+      <div class="form-group">
+        <label for="adminName">Username</label>
+        <input type="text" id="adminName" required>
+      </div>
+      <div class="form-group">
+        <label for="adminEmail">Email</label>
+        <input type="email" id="adminEmail" required>
+      </div>
+      <div class="form-group">
+        <label for="adminPassword">Password</label>
+        <input type="password" id="adminPassword" required>
+      </div>
+      <div class="form-group">
+        <label for="adminConfirmPassword">Confirm Password</label>
+        <input type="password" id="adminConfirmPassword" required>
+      </div>
+       
+<!-- ADD THIS NEW FIELD -->
+     <div class="form-group">
+       <label for="secretCode">Super Admin Secret Code (Optional)</label>
+       <input type="password" id="secretCode" placeholder="Leave blank for regular admin">
+     </div>
+
+      <button type="submit">Create Admin</button>
+    </form>
+
+    <!-- Login Form -->
+    <form id="loginForm" class="form">
+      <h2>Admin Login</h2>
+      <div class="form-group">
+        <label for="loginEmail">Email</label>
+        <input type="email" id="loginEmail" required>
+      </div>
+      <div class="form-group">
+        <label for="loginPassword">Password</label>
+        <input type="password" id="loginPassword" required>
+      </div>
+      <button type="submit">Login</button>
+    </form>
+
+    <!-- Forgot Password Form -->
+    <form id="forgotForm" class="form">
+      <h2>Reset Password</h2>
+      <div class="form-group">
+        <label for="forgotEmail">Enter your email</label>
+        <input type="email" id="forgotEmail" required>
+      </div>
+      <button type="submit">Send Reset Link</button>
+    </form>
+
+    <!-- Reset Password Form (shown when token is present) -->
+    <form id="resetForm" class="form">
+      <h2>Set New Password</h2>
+      <div class="form-group">
+        <label for="resetPassword">New Password</label>
+        <input type="password" id="resetPassword" required>
+      </div>
+      <div class="form-group">
+        <label for="resetConfirmPassword">Confirm Password</label>
+        <input type="password" id="resetConfirmPassword" required>
+      </div>
+      <button type="submit">Update Password</button>
+    </form>
+  </div>
+
+  <script>
+
+// -------------------------------
+// Tab Switching for Signup/Login/Forgot
+// -------------------------------
+const tabButtons = document.querySelectorAll(".tab-btn");
+const forms = document.querySelectorAll(".form");
+
+tabButtons.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    tabButtons.forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+
+    const target = btn.getAttribute("data-target");
+    forms.forEach((form) => {
+      form.id === target ? form.classList.add("active") : form.classList.remove("active");
+    });
+  });
+});
+
+// -------------------------------
+// Admin Auth JS
+// -------------------------------
+const API_URL = "https://valley.pvbonline.online/api/admin/auth";
+
+// Utility function for button loading state
+const setButtonLoading = (button, isLoading, text = "Processing...") => {
+  if (isLoading) {
+    button.disabled = true;
+    button.dataset.originalText = button.textContent;
+    button.innerHTML = `<span class="spinner"></span> ${text}`;
+  } else {
+    button.disabled = false;
+    button.textContent = button.dataset.originalText || button.textContent;
+  }
+};
+
+// -------------------------------
+// Signup Form Handling
+// -------------------------------
+const signupForm = document.getElementById("signupForm");
+
+signupForm?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const button = signupForm.querySelector("button[type='submit']");
+  setButtonLoading(button, true);
+
+  const username = document.getElementById("adminName").value.trim();
+  const email = document.getElementById("adminEmail").value.trim();
+  const password = document.getElementById("adminPassword").value.trim();
+  const confirmPassword = document.getElementById("adminConfirmPassword").value.trim();
+  const secretCode = document.getElementById("secretCode").value.trim();
+
+  if (password !== confirmPassword) {
+    alert("Passwords do not match!");
+    setButtonLoading(button, false);
+    return;
+  }
+
+  try {
+    console.log("Sending data:", { username, email, password, secretCode });
+    const res = await fetch(`${API_URL}/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, email, password, secretCode }),
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      alert(data.message || "Signup failed");
+    } else {
+      alert("Signup successful! Please login.");
+      document.querySelector('.tab-btn[data-target="loginForm"]').click();
+    }
+  } catch (error) {
+    console.error("Signup error:", error);
+    alert("An error occurred. Check console.");
+  } finally {
+    setButtonLoading(button, false);
+  }
+});
+
+// -------------------------------
+// Login Form Handling
+// -------------------------------
+const loginForm = document.getElementById("loginForm");
+
+loginForm?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const button = loginForm.querySelector("button[type='submit']");
+  setButtonLoading(button, true);
+
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value.trim();
+
+  try {
+    const res = await fetch(`${API_URL}/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      alert(data.message || "Login failed");
+   } else {
+  localStorage.setItem("adminToken", data.token);
+  localStorage.setItem("adminUsername", data.username);
+  localStorage.setItem("adminEmail", data.email);  // ADD THIS LINE
+  localStorage.setItem("adminRole", data.role);
+  
+  // Role-based redirect
+  if (data.role === "superadmin") {
+    window.location.href = "superadmin-dashboard.html";
+  } else {
+    window.location.href = "admin.html";
+  }
+}
+  } catch (error) {
+    console.error("Login error:", error);
+    alert("An error occurred. Contact Admin Dev.");
+  } finally {
+    setButtonLoading(button, false);
+  }
+});
+
+// -------------------------------
+// Forgot Password Form Handling
+// -------------------------------
+const forgotForm = document.getElementById("forgotForm");
+
+forgotForm?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const button = forgotForm.querySelector("button[type='submit']");
+  setButtonLoading(button, true);
+
+  const email = document.getElementById("forgotEmail").value.trim();
+
+  try {
+    const res = await fetch(`${API_URL}/forgot`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      alert(data.message || "Failed to send reset email");
+    } else {
+      alert("Password reset link sent to your email.");
+    }
+  } catch (error) {
+    console.error("Forgot password error:", error);
+    alert("An error occurred. Contact Admin Dev.");
+  } finally {
+    setButtonLoading(button, false);
+  }
+});
+
+// -------------------------------
+// Reset Password Handling
+// -------------------------------
+window.addEventListener("DOMContentLoaded", () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const resetToken = urlParams.get("resetToken");
+
+  if (resetToken) {
+    const resetForm = document.getElementById("resetForm");
+    resetForm.classList.add("active");
+    document.getElementById("loginForm").classList.remove("active");
+    document.getElementById("signupForm").classList.remove("active");
+    document.getElementById("forgotForm").classList.remove("active");
+
+    resetForm?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const button = resetForm.querySelector("button[type='submit']");
+      setButtonLoading(button, true);
+
+      const password = document.getElementById("resetPassword").value.trim();
+      const confirmPassword = document.getElementById("resetConfirmPassword").value.trim();
+
+      if (password !== confirmPassword) {
+        alert("Passwords do not match!");
+        setButtonLoading(button, false);
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_URL}/reset`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token: resetToken, password }),
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+          alert(data.message || "Password reset failed");
+        } else {
+          alert("Password reset successful! Please login.");
+          window.location.href = "admin-signup.html";
+        }
+      } catch (error) {
+        console.error("Reset password error:", error);
+        alert("An error occurred. Check console.");
+      } finally {
+        setButtonLoading(button, false);
+      }
+    });
+  }
+});
+
+// -------------------------------
+// Protect Admin Dashboard
+// -------------------------------
+if (window.location.pathname.includes("admin.html")) {
+  const token = localStorage.getItem("adminToken");
+  if (!token) {
+    alert("You must login first!");
+    window.location.href = "admin-signup.html";
+  } else {
+    const adminNameSpan = document.getElementById("adminNameDisplay");
+    if (adminNameSpan) {
+      adminNameSpan.textContent = localStorage.getItem("adminUsername") || "Admin";
+    }
+  }
+};
+
+
+
+  </script>
+
+</body>
+</html>

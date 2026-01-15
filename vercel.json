@@ -1,0 +1,20 @@
+{
+  "rewrites": [
+    { "source": "/admin", "destination": "/admin.html" },
+    { "source": "/adminfundcard", "destination": "/admin-fund-card.html" },
+    { "source": "/adminsignup", "destination": "/admin-signup.html" },
+    { "source": "/admintransaction", "destination": "/admin-transactions.html" },
+    { "source": "/admiusercard", "destination": "/admin-user-card.html" },
+    { "source": "/useratmcard", "destination": "/atm.html" },
+    { "source": "/cardfundacct", "destination": "/card-to-account.html" },
+    { "source": "/fundcard", "destination": "/fund-card.html" },
+    { "source": "/loan", "destination": "/loan-applications.html" },
+    { "source": "/heroslides", "destination": "/memert.html" },
+    { "source": "/resetpin", "destination": "/reset-pin.html" },
+    { "source": "/statement", "destination": "/statement.html" },
+    { "source": "/supperadmin", "destination": "/supperadmin-dashboard.html" },
+    { "source": "/userdashboard", "destination": "/userpage.html" },
+    { "source": "/viewcard", "destination": "/view-card.html" }
+    
+  ]
+}

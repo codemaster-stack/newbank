@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reset Transaction PIN</title>
+  <link rel="stylesheet" href="styles.css"> <!-- optional if you have a global CSS -->
+</head>
+<body>
+  <div class="reset-container">
+    <h2>Reset Transaction PIN</h2>
+    <form id="resetPinForm">
+      <label for="newPin">New 4-digit PIN</label>
+      <input type="password" id="newPin" maxlength="4" required />
+
+      <label for="confirmPin">Confirm PIN</label>
+      <input type="password" id="confirmPin" maxlength="4" required />
+
+      <button type="submit">Reset PIN</button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById("resetPinForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const newPin = document.getElementById("newPin").value;
+      const confirmPin = document.getElementById("confirmPin").value;
+
+      if (newPin !== confirmPin) {
+        alert("❌ PINs do not match!");
+        return;
+      }
+
+      // get token from URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const token = urlParams.get("token");
+
+      if (!token) {
+        alert("❌ Invalid or missing reset token.");
+        return;
+      }
+
+      try {
+        const res = await fetch("https://valley.pvbonline.online/api/users/reset-pin", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token, newPin })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          alert("✅ PIN reset successful! Please login and try your transfer again.");
+          window.location.href = "/login.html"; // redirect after success
+        } else {
+          alert(data.message || "❌ Failed to reset PIN");
+        }
+      } catch (err) {
+        console.error("Error resetting PIN:", err);
+        alert("Server error. Please try again.");
+      }
+    });
+  </script>
+</body>
+</html>

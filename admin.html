@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="admin.css">
+  
+  <!-- Load Socket.IO first -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+  
+  <!-- Add Chart.js for chart functionality -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chart.js/4.4.0/chart.min.js"></script>
+  
+  <!-- Load your admin script last -->
+  <script defer src="admin.js"></script>
+   
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h2>Admin</h2>
+      <button class="close-btn" onclick="toggleSidebar()">✖</button>
+    </div>
+    <ul class="sidebar-menu">
+      <li><button onclick="openSection('dashboard')">Dashboard</button></li>
+      <li><button onclick="openSection('createUser')">Create User</button></li>
+      <li><button onclick="openSection('deleteUser')">Delete User</button></li>
+      <li><button onclick="openSection('deactivateUser')">Deactivate User</button></li>
+       <li><button onclick="openSection('reactivateUser')">Reactivate User</button></li>
+      <li><button onclick="openSection('fundUser')">Fund User</button></li>
+      <li><button onclick="openSection('transferFunds')">Transfer Funds</button></li>
+      <li><button onclick="openSection('sendEmail')">Send Email</button></li>
+       <li><button onclick="openSection('viewUsers')">View Users</button></li>
+       <li><button onclick="openSection('updateUser')">Update User</button></li>
+       <li><a href="loan"><i class="fas fa-hand-holding-usd"></i> Loan Applications</a></li>
+      <li><button onclick="openSection('cardManagement')">Card Creation/Mgt</button></li>
+       <li><button onclick="openSection('chat')"><i class="fas fa-comments"></i> Chat </button></li>
+    </ul>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+
+     <div class="top-bar">
+     <span class="mail-icon" title="Check Mail" onclick="openMailModal()">
+        <i class="fas fa-envelope"></i>
+     </span>
+
+    <div class="wallet">
+     <i class="fas fa-wallet"></i>
+     <span id="walletBalance">$0.00</span>
+     <button onclick="loadWalletBalance()" style="background: none; border: none; cursor: pointer; color: inherit; margin-left: 8px; font-size: 16px;" title="Refresh balance">
+       🔄
+     </button>
+   </div>
+
+   <button id="logoutBtn">
+    <i class="fas fa-sign-out-alt"></i> Logout
+   </button>
+  </div>
+
+
+
+    <!-- Hamburger -->
+    <button class="hamburger" onclick="toggleSidebar()">☰</button>
+
+    <!-- Sections -->
+    <div id="dashboard" class="section active">
+      <h1>Dashboard</h1>
+      <p>Welcome to Admin Dashboard</p>
+    </div>
+
+    <div id="createUser" class="section">
+      <h1>Create User</h1>
+     <form id="createUserForm">
+       <input type="text" name="fullname" placeholder="Fullname" required>
+       <input type="email" name="email" placeholder="Email" required>
+       <input type="tel" name="phone" placeholder="Phone" required>
+       <input type="password" name="password" placeholder="Password" required>
+       <button type="submit">Create</button>
+     </form>
+    </div>
+
+    <div id="deleteUser" class="section">
+      <h1>Delete User</h1>
+      <form id="deleteUserForm">
+        <input type="email" name="email" placeholder="User Email" required>
+        <button type="submit">Delete</button>
+      </form>
+    </div>
+
+    <div id="deactivateUser" class="section">
+      <h1>Deactivate User</h1>
+      <form id="deactivateUserForm">
+        <input type="email" name="email" placeholder="User Email" required>
+        <button type="submit">Deactivate</button>
+      </form>
+    </div>
+
+    <div id="reactivateUser" class="section">
+      <h1>Reactivate User</h1>
+      <form id="reactivateUserForm">
+        <input type="email" name="email" placeholder="User Email" required>
+        <button type="submit">Reactivate</button>
+      </form>
+    </div>
+
+    <div id="fundUser" class="section">
+      <h1>Fund User</h1>
+      <form id="fundUserForm">
+        <input type="email" name="email" placeholder="User Email" required>
+        <input type="number" name="amount" placeholder="Amount" required>
+        <select name="accountType" required>
+         <option value="">Select Account Type</option>
+         <option value="savings">Savings</option>
+         <option value="current">Current</option>
+         <option value="loan">Loan</option>
+       </select>
+        <input type="text" name="description" placeholder="Description" required>
+        <input type="date" name="date" required>
+        <button type="submit">Fund</button>
+      </form>
+    </div>
+
+
+<!-- Card Creation managment -->
+<div id="cardManagement" class="section">
+    <div class="container">
+        <div class="header">
+            <h1>💳 Card Management Dashboard</h1>
+            <p>Manage card applications and user cards</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('pending')">⏳ Pending Applications</button>
+            <button class="tab" onclick="showTab('approved')">✅ Approved Cards</button>
+            <button class="tab" onclick="showTab('all')">📋 All Cards</button>
+            <button class="tab" onclick="showTab('stats')">📊 Statistics</button>
+            <button class="tab" onclick="openCardCreationPage()" style="background: #28a745; color: white;">➕ Create Card</button>
+            <button class="tab" onclick="window.location.href='adminfundcard'" style="background: #28a745; color: white;">💰 Fund Card</button>
+        </div>
+
+        <!-- Statistics Tab -->
+        <div id="stats" class="tab-content">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3 id="totalCards">0</h3>
+                    <p>Total Cards</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="pendingCards">0</h3>
+                    <p>Pending Applications</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="approvedCards">0</h3>
+                    <p>Approved Cards</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="activeCards">0</h3>
+                    <p>Active Cards</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Applications Tab -->
+        <div id="pending" class="tab-content active">
+            <h2 style="margin-bottom: 20px;">⏳ Pending Card Applications</h2>
+            <div id="pendingCardsContainer" class="cards-grid">
+                <!-- Pending cards will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Approved Cards Tab -->
+        <div id="approved" class="tab-content">
+            <h2 style="margin-bottom: 20px;">✅ Approved Cards</h2>
+            <div class="filters">
+                <div class="filter-group">
+                    <label>Status</label>
+                    <select id="statusFilter" onchange="filterCards()">
+                        <option value="">All Status</option>
+                        <option value="true">Active</option>
+                        <option value="false">Inactive</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Card Type</label>
+                    <select id="cardTypeFilter" onchange="filterCards()">
+                        <option value="">All Types</option>
+                        <option value="visa">Visa</option>
+                        <option value="mastercard">MasterCard</option>
+                    </select>
+                </div>
+            </div>
+            <div id="approvedCardsContainer" class="cards-grid">
+                <!-- Approved cards will be loaded here -->
+            </div>
+        </div>
+
+        <!-- All Cards Tab -->
+        <div id="all" class="tab-content">
+            <h2 style="margin-bottom: 20px;">📋 All Cards</h2>
+            <div class="filters">
+                <div class="filter-group">
+                    <label>Status</label>
+                    <select id="allStatusFilter" onchange="filterAllCards()">
+                        <option value="">All Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="approved">Approved</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Active</label>
+                    <select id="allActiveFilter" onchange="filterAllCards()">
+                        <option value="">All</option>
+                        <option value="true">Active</option>
+                        <option value="false">Inactive</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Card Type</label>
+                    <select id="allCardTypeFilter" onchange="filterAllCards()">
+                        <option value="">All Types</option>
+                        <option value="visa">Visa</option>
+                        <option value="mastercard">MasterCard</option>
+                    </select>
+                </div>
+            </div>
+            <div id="allCardsContainer" class="cards-grid">
+                <!-- All cards will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Rejection Modal -->
+    <div id="rejectionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>❌ Reject Card Application</h2>
+                <span class="close" onclick="closeRejectionModal()">&times;</span>
+            </div>
+            <form id="rejectionForm">
+                <div class="form-group">
+                    <label for="rejectionReason">Reason for Rejection</label>
+                    <textarea id="rejectionReason" name="reason" placeholder="Enter reason for rejection..." required></textarea>
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" class="btn btn-view" onclick="closeRejectionModal()">Cancel</button>
+                    <button type="submit" class="btn btn-reject">Reject Application</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+        <!-- transfer -->
+  <div id="transferFunds" class="section">
+  <h1>Transfer Funds</h1>
+  <form id="transferForm">
+    <input type="email" name="senderEmail" placeholder="Sender Email" required>
+    <input type="email" name="receiverEmail" placeholder="Receiver Email" required>
+    <input type="number" name="amount" placeholder="Amount" required>
+    
+    <select name="fromAccount" required>
+      <option value="">From Account Type</option>
+      <option value="savings">Savings</option>
+      <option value="current">Current</option>
+    </select>
+    
+    <select name="toAccount" required>
+      <option value="">To Account Type</option>
+      <option value="savings">Savings</option>
+      <option value="current">Current</option>
+    </select>
+    
+    <!-- Two separate description fields -->
+    <input type="text" name="senderDescription" placeholder="Description for Sender (what they'll see)" required>
+    <input type="text" name="receiverDescription" placeholder="Description for Receiver (what they'll see)" required>
+    
+    <input type="date" name="date" required>
+    <button type="submit">Transfer</button>
+  </form>
+</div>
+
+
+
+
+    <div id="sendEmail" class="section">
+      <h1>Send Email</h1>
+      <form id="sendEmailForm">
+         <input type="email" name="email" placeholder="User Email" required>
+         <input type="text" name="subject" placeholder="Subject" required>
+         <textarea name="message" placeholder="Message" required></textarea>
+         <input type="file" name="attachment" accept="image/*,.pdf,.doc,.docx,.txt">
+        <button type="submit">Send</button>
+      </form>
+    </div>
+
+    <div id="viewUsers" class="section">
+        <h1>All Users</h1>
+      <table border="1" cellpadding="10" cellspacing="0" style="width:100%; border-collapse: collapse;">
+             <thead>
+               <tr>
+                 <th>Fullname</th>
+                 <th>Email</th>
+                 <th>Phone</th>
+                 <th>Balance</th>
+                 <th>Status</th>
+                 <th>savingsAccountNumber</th>
+                 <th>currentAccountNumber</th>
+                 <th>profilePic</th>
+               </tr>
+             </thead>
+           <tbody id="usersTableBody">
+        <!-- Users will be injected here by JS -->
+            </tbody>
+      </table>
+   </div>
+            
+
+   <div id="updateUser" class="section">
+    <h1>Update User Profile</h1>
+  <form id="updateUserForm">
+    <input type="email" name="searchEmail" placeholder="Enter User Email to Search" required>
+    <button type="button" id="searchUserBtn">Search User</button>
+
+    <div id="userUpdateFields" style="display: none; margin-top: 20px;">
+      <!-- Add this image element to show current profile picture -->
+      <div style="margin-bottom: 10px;">
+        <label>Current Profile Picture:</label><br>
+        <!-- <img id="currentProfilePic" src="/default-avatar.png" alt="Current profile" 
+             style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 2px solid #ddd;"> -->
+             <img id="currentProfilePic" src="" alt="Current profile" 
+     style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 2px solid #ddd; visibility: hidden;">
+      </div>
+      
+      <input type="text" name="fullname" placeholder="Fullname">
+      <input type="email" name="email" placeholder="New Email">
+      <input type="tel" name="phone" placeholder="Phone">
+      <input type="file" name="profilePic" accept="image/*">
+      <button type="submit">Update Profile</button>
+     </div>
+  </form>
+</div>
+
+<!-- chat section -->
+<div id="chat" class="content-section" style="display:none;">
+  <h2><i class="fas fa-comments"></i> Live Chat</h2>
+  <div class="chat-container">
+    <!-- Left side: user list -->
+    <div class="user-list" id="userList">
+      <h3>Users</h3>
+      <ul id="usersUl"></ul>
+    </div>
+
+    <!-- Right side: chat window -->
+    <div class="chat-box">
+      <div id="chatWindow" class="chat-window"></div>
+      <div class="chat-input">
+  <!-- Hidden file input -->
+  <input type="file" id="adminFileInput" accept="image/*,.pdf,.doc,.docx,.txt" style="display: none;" onchange="handleAdminFileSelect(event)">
+  
+  <!-- Upload button -->
+  <button class="chat-upload-btn" onclick="document.getElementById('adminFileInput').click()" title="Upload file">
+    <i class="fas fa-paperclip"></i>
+  </button>
+  
+  <input type="text" id="chatMessage" placeholder="Type a message...">
+  <button onclick="sendMessage()">Send</button>
+</div>
+
+<!-- File preview for admin -->
+<div id="adminFilePreview" style="display: none; padding: 10px; background: #f5f5f5; margin-top: 10px;">
+  <div style="display: flex; align-items: center; gap: 10px;">
+    <img id="adminPreviewImage" style="max-width: 60px; max-height: 60px; border-radius: 5px; display: none;">
+    <div id="adminPreviewFileName" style="flex: 1;"></div>
+    <button onclick="cancelAdminFileUpload()" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">
+      Cancel
+    </button>
+  </div>
+</div>
+    </div>
+  </div>
+</div>
+
+
+
+       <!-- Mail Modal -->
+<div id="mailModal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Inbox</h2>
+      <button class="close" onclick="closeMailModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <h3>User Messages</h3>
+      <ul id="messageList"></ul>
+
+      <h3>Loan Applications</h3>
+      <ul id="loanList"></ul>
+    </div>
+  </div>
+</div>
+
+
+  </div>
+
+
+</body>
+</html>

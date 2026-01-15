@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction History - Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+        }
+
+        .admin-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .admin-header h1 {
+            font-size: 2rem;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-icon {
+            padding: 0.5rem;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.2s;
+        }
+
+        .btn-edit {
+            color: #007bff;
+        }
+
+        .btn-edit:hover {
+            color: #0056b3;
+            transform: scale(1.2);
+        }
+
+        .btn-delete {
+            color: #dc3545;
+        }
+
+        .btn-delete:hover {
+            color: #c82333;
+            transform: scale(1.2);
+        }
+
+        .filters-container {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-group label {
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .filter-group input,
+        .filter-group select {
+            padding: 0.6rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            min-width: 150px;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .stat-icon.blue {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .stat-icon.green {
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+        }
+
+        .stat-icon.orange {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        .stat-icon.purple {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+        }
+
+        .stat-info h3 {
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-info p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow-x: auto;
+            margin-bottom: 2rem;
+        }
+
+        .transactions-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .transactions-table thead {
+            background: #f8f9fa;
+        }
+
+        .transactions-table th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #555;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .transactions-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .transactions-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-info strong {
+            color: #333;
+        }
+
+        .user-info small {
+            color: #666;
+            font-size: 0.85rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-transform: capitalize;
+        }
+
+        .badge-deposit {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-withdrawal {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .badge-transfer {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .badge-loan {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-payment {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-transform: capitalize;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-failed {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-cancelled {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+
+        .amount {
+            font-weight: 600;
+            font-size: 1.05rem;
+        }
+
+        .amount.positive {
+            color: #28a745;
+        }
+
+        .amount.negative {
+            color: #dc3545;
+        }
+
+        .description {
+            max-width: 200px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 1rem;
+        }
+
+        .pagination button {
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .pagination button:hover:not(:disabled) {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .pagination button.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination span {
+            padding: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            position: relative;
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .close-btn:hover {
+            color: #333;
+        }
+
+        form {
+            padding: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .loading, .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+
+        .fa-spin {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateX(400px);
+            transition: transform 0.3s;
+            z-index: 2000;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .notification-error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        @media (max-width: 768px) {
+            .admin-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .header-actions {
+                width: 100%;
+                flex-direction: column;
+            }
+            
+            .filters-container {
+                flex-direction: column;
+            }
+            
+            .filter-group input,
+            .filter-group select {
+                width: 100%;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1><i class="fas fa-exchange-alt"></i> Transaction History Management</h1>
+            <div class="header-actions">
+                <button class="btn btn-primary" onclick="openAddModal()">
+                    <i class="fas fa-plus"></i> Add Transaction
+                </button>
+                <button class="btn btn-secondary" onclick="exportTransactions()">
+                    <i class="fas fa-download"></i> Export CSV
+                </button>
+                <a href="admin" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
+        </div>
+
+        <div class="filters-container">
+            <div class="filter-group">
+                <label for="filterUser">User</label>
+                <input type="text" id="filterUser" placeholder="Search by user email or name">
+            </div>
+            <div class="filter-group">
+                <label for="filterType">Type</label>
+                <select id="filterType">
+                    <option value="">All Types</option>
+                    <option value="deposit">Deposit</option>
+                    <option value="withdrawal">Withdrawal</option>
+                    <option value="transfer">Transfer</option>
+                    <option value="loan">Loan</option>
+                    <option value="payment">Payment</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="filterStatus">Status</label>
+                <select id="filterStatus">
+                    <option value="">All Status</option>
+                    <option value="pending">Pending</option>
+                    <option value="completed">Completed</option>
+                    <option value="failed">Failed</option>
+                    <option value="cancelled">Cancelled</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="filterDateFrom">From</label>
+                <input type="date" id="filterDateFrom">
+            </div>
+            <div class="filter-group">
+                <label for="filterDateTo">To</label>
+                <input type="date" id="filterDateTo">
+            </div>
+            <button class="btn btn-primary" onclick="applyFilters()">
+                <i class="fas fa-filter"></i> Apply
+            </button>
+            <button class="btn btn-secondary" onclick="clearFilters()">
+                <i class="fas fa-times"></i> Clear
+            </button>
+        </div>
+
+        <div class="stats-container" id="statsContainer">
+            <div class="stat-card">
+                <div class="stat-icon blue"><i class="fas fa-exchange-alt"></i></div>
+                <div class="stat-info">
+                    <h3 id="totalTransactions">0</h3>
+                    <p>Total Transactions</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
+                <div class="stat-info">
+                    <h3 id="completedTransactions">0</h3>
+                    <p>Completed</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon orange"><i class="fas fa-clock"></i></div>
+                <div class="stat-info">
+                    <h3 id="pendingTransactions">0</h3>
+                    <p>Pending</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon purple"><i class="fas fa-dollar-sign"></i></div>
+                <div class="stat-info">
+                    <h3 id="totalAmount">$0</h3>
+                    <p>Total Amount</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="transactions-table" id="transactionsTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>User</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="transactionsBody">
+                    <tr>
+                        <td colspan="8" class="loading">
+                            <i class="fas fa-spinner fa-spin"></i> Loading transactions...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pagination" id="pagination"></div>
+    </div>
+
+    <div class="modal" id="transactionModal">
+        <div class="modal-overlay" onclick="closeModal()"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Add Transaction</h2>
+                <button class="close-btn" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <form id="transactionForm" onsubmit="saveTransaction(event)">
+                <input type="hidden" id="transactionId">
+
+                <div class="form-group">
+                    <label for="userId">User *</label>
+                    <select id="userId" required>
+                        <option value="">Select User</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="transactionType">Type *</label>
+                        <select id="transactionType" required>
+                            <option value="deposit">Deposit</option>
+                            <option value="withdrawal">Withdrawal</option>
+                            <option value="transfer">Transfer</option>
+                            <option value="loan">Loan</option>
+                            <option value="payment">Payment</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="amount">Amount *</label>
+                        <input type="number" id="amount" required min="0" step="0.01" placeholder="0.00">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="status">Status *</label>
+                    <select id="status" required>
+                        <option value="pending">Pending</option>
+                        <option value="completed">Completed</option>
+                        <option value="failed">Failed</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" rows="3" placeholder="Transaction details..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="reference">Reference Number</label>
+                    <input type="text" id="reference" placeholder="TXN-XXXX">
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save"></i> Save Transaction
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+       // FIXED SCRIPT - Matches your backend routes
+// COMPLETE FIXED SCRIPT - All auth headers included
+const API_URL = 'https://valley.pvbonline.online/api/admin/auth';
+
+let currentPage = 1;
+let totalPages = 1;
+let allTransactions = [];
+let filteredTransactions = [];
+
+// Helper function to get auth token
+function getAuthToken() {
+    return localStorage.getItem('adminToken') || sessionStorage.getItem('adminToken') || localStorage.getItem('token') || sessionStorage.getItem('token');
+}
+
+// Helper function to get auth headers
+function getAuthHeaders() {
+    const token = getAuthToken();
+    return {
+        'Content-Type': 'application/json',
+        ...(token && { 'Authorization': `Bearer ${token}` })
+    };
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Check if user is authenticated
+    if (!getAuthToken()) {
+        console.warn('No authentication token found. Please log in.');
+        showNotification('Please log in to access this page', 'error');
+        return;
+    }
+    
+    loadTransactions();
+    loadUsers();
+});
+
+// Load all transactions
+async function loadTransactions() {
+    try {
+        const response = await fetch(`${API_URL}/transactions`, {
+            method: 'GET',
+            headers: getAuthHeaders()
+        });
+        
+        if (!response.ok) {
+            if (response.status === 401) {
+                throw new Error('Unauthorized. Please log in again.');
+            }
+            throw new Error('Failed to load transactions');
+        }
+        
+        const data = await response.json();
+        allTransactions = data.transactions || data;
+        filteredTransactions = [...allTransactions];
+        updateStats();
+        renderTransactions();
+    } catch (error) {
+        console.error('Error loading transactions:', error);
+        showNotification(error.message || 'Error loading transactions', 'error');
+    }
+}
+
+// Load users
+async function loadUsers() {
+    try {
+        const token = getAuthToken();
+        
+        if (!token) {
+            console.warn('No authentication token found');
+            return;
+        }
+
+        const response = await fetch(`${API_URL}/users`, {
+            method: 'GET',
+            headers: getAuthHeaders()
+        });
+        
+        if (!response.ok) {
+            console.warn('Users endpoint not available');
+            return;
+        }
+        
+        const data = await response.json();
+        const users = data.users || data;
+        
+        const userSelect = document.getElementById('userId');
+        if (userSelect) {
+            userSelect.innerHTML = '<option value="">Select User</option>';
+            users.forEach(user => {
+                const option = document.createElement('option');
+                option.value = user.id || user._id;
+                option.textContent = `${user.name || user.username} (${user.email})`;
+                userSelect.appendChild(option);
+            });
+        }
+    } catch (error) {
+        console.error('Error loading users:', error);
+    }
+}
+
+// Update statistics
+function updateStats() {
+    const total = filteredTransactions.length;
+    const completed = filteredTransactions.filter(t => t.status === 'completed').length;
+    const pending = filteredTransactions.filter(t => t.status === 'pending').length;
+    const totalAmount = filteredTransactions
+        .filter(t => t.status === 'completed')
+        .reduce((sum, t) => sum + parseFloat(t.amount || 0), 0);
+    
+    document.getElementById('totalTransactions').textContent = total;
+    document.getElementById('completedTransactions').textContent = completed;
+    document.getElementById('pendingTransactions').textContent = pending;
+    document.getElementById('totalAmount').textContent = `$${totalAmount.toFixed(2)}`;
+}
+
+function renderTransactions() {
+    const tbody = document.getElementById('transactionsBody');
+    if (filteredTransactions.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" class="empty-state">No transactions found</td></tr>';
+        return;
+    }
+    
+    const itemsPerPage = 20;
+    totalPages = Math.ceil(filteredTransactions.length / itemsPerPage);
+    const start = (currentPage - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    const pageTransactions = filteredTransactions.slice(start, end);
+    
+    tbody.innerHTML = pageTransactions.map(txn => `
+        <tr>
+            <td>#${txn.id || txn._id}</td>
+            <td>
+                <div class="user-info">
+                    <strong>${txn.userName || txn.user?.name || 'N/A'}</strong>
+                    <small>${txn.userEmail || txn.user?.email || 'N/A'}</small>
+                </div>
+            </td>
+            <td><span class="badge badge-${txn.type}">${txn.type}</span></td>
+            <td class="amount ${txn.type === 'withdrawal' ? 'negative' : 'positive'}">
+                ${txn.type === 'withdrawal' ? '-' : '+'}$${parseFloat(txn.amount).toFixed(2)}
+            </td>
+            <td><span class="status-badge status-${txn.status}">${txn.status}</span></td>
+            <td>${formatDate(txn.createdAt)}</td>
+            <td class="description">${txn.description || 'N/A'}</td>
+            <td>
+                <div class="action-buttons">
+                    <button class="btn-icon btn-edit" onclick="editTransaction('${txn.id || txn._id}')" title="Edit">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn-icon btn-delete" onclick="deleteTransaction('${txn.id || txn._id}')" title="Delete">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>
+    `).join('');
+    
+    renderPagination();
+}
+
+function renderPagination() {
+    const pagination = document.getElementById('pagination');
+    if (totalPages <= 1) {
+        pagination.innerHTML = '';
+        return;
+    }
+    
+    let html = `<button onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>Previous</button>`;
+    
+    for (let i = 1; i <= totalPages; i++) {
+        if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+            html += `<button onclick="changePage(${i})" class="${i === currentPage ? 'active' : ''}">${i}</button>`;
+        } else if (i === currentPage - 3 || i === currentPage + 3) {
+            html += '<span>...</span>';
+        }
+    }
+    
+    html += `<button onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>Next</button>`;
+    pagination.innerHTML = html;
+}
+
+function changePage(page) {
+    if (page < 1 || page > totalPages) return;
+    currentPage = page;
+    renderTransactions();
+}
+
+function applyFilters() {
+    const userFilter = document.getElementById('filterUser').value.toLowerCase();
+    const typeFilter = document.getElementById('filterType').value;
+    const statusFilter = document.getElementById('filterStatus').value;
+    const dateFrom = document.getElementById('filterDateFrom').value;
+    const dateTo = document.getElementById('filterDateTo').value;
+    
+    filteredTransactions = allTransactions.filter(txn => {
+        const matchUser = !userFilter || 
+            (txn.userName && txn.userName.toLowerCase().includes(userFilter)) || 
+            (txn.userEmail && txn.userEmail.toLowerCase().includes(userFilter)) ||
+            (txn.user?.name && txn.user.name.toLowerCase().includes(userFilter)) ||
+            (txn.user?.email && txn.user.email.toLowerCase().includes(userFilter));
+        
+        const matchType = !typeFilter || txn.type === typeFilter;
+        const matchStatus = !statusFilter || txn.status === statusFilter;
+        
+        let matchDate = true;
+        if (dateFrom || dateTo) {
+            const txnDate = new Date(txn.createdAt).toISOString().split('T')[0];
+            if (dateFrom && txnDate < dateFrom) matchDate = false;
+            if (dateTo && txnDate > dateTo) matchDate = false;
+        }
+        
+        return matchUser && matchType && matchStatus && matchDate;
+    });
+    
+    currentPage = 1;
+    updateStats();
+    renderTransactions();
+}
+
+function clearFilters() {
+    document.getElementById('filterUser').value = '';
+    document.getElementById('filterType').value = '';
+    document.getElementById('filterStatus').value = '';
+    document.getElementById('filterDateFrom').value = '';
+    document.getElementById('filterDateTo').value = '';
+    filteredTransactions = [...allTransactions];
+    currentPage = 1;
+    updateStats();
+    renderTransactions();
+}
+
+function openAddModal() {
+    document.getElementById('modalTitle').textContent = 'Add Transaction';
+    document.getElementById('transactionForm').reset();
+    document.getElementById('transactionId').value = '';
+    document.getElementById('transactionModal').classList.add('active');
+}
+
+function closeModal() {
+    document.getElementById('transactionModal').classList.remove('active');
+}
+
+// Edit transaction - ✅ FIXED WITH AUTH
+async function editTransaction(id) {
+    try {
+        const response = await fetch(`${API_URL}/transactions/${id}`, {
+            method: 'GET',
+            headers: getAuthHeaders()  // ✅ AUTH INCLUDED
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to load transaction');
+        }
+        
+        const txn = await response.json();
+        const transaction = txn.transaction || txn;
+        
+        document.getElementById('modalTitle').textContent = 'Edit Transaction';
+        document.getElementById('transactionId').value = transaction.id || transaction._id;
+        document.getElementById('userId').value = transaction.userId || transaction.user?._id;
+        document.getElementById('transactionType').value = transaction.type;
+        document.getElementById('amount').value = transaction.amount;
+        document.getElementById('status').value = transaction.status;
+        document.getElementById('description').value = transaction.description || '';
+        document.getElementById('reference').value = transaction.reference || '';
+        document.getElementById('transactionModal').classList.add('active');
+    } catch (error) {
+        console.error('Error loading transaction:', error);
+        showNotification(error.message || 'Error loading transaction', 'error');
+    }
+}
+
+// Save transaction - ✅ FIXED WITH AUTH
+async function saveTransaction(event) {
+    event.preventDefault();
+    
+    const id = document.getElementById('transactionId').value;
+    const data = {
+        userId: document.getElementById('userId').value,
+        type: document.getElementById('transactionType').value,
+        amount: document.getElementById('amount').value,
+        status: document.getElementById('status').value,
+        description: document.getElementById('description').value,
+        reference: document.getElementById('reference').value
+    };
+    
+    try {
+        const url = id ? `${API_URL}/transactions/${id}` : `${API_URL}/transactions`;
+        const method = id ? 'PUT' : 'POST';
+        
+        const response = await fetch(url, {
+            method: method,
+            headers: getAuthHeaders(),  // ✅ AUTH INCLUDED
+            body: JSON.stringify(data)
+        });
+        
+        if (response.ok) {
+            closeModal();
+            loadTransactions();
+            showNotification('Transaction saved successfully!', 'success');
+        } else {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Failed to save transaction');
+        }
+    } catch (error) {
+        console.error('Error saving transaction:', error);
+        showNotification(error.message || 'Error saving transaction', 'error');
+    }
+}
+
+// Delete transaction - ✅ FIXED WITH AUTH
+async function deleteTransaction(id) {
+    if (!confirm('Are you sure you want to delete this transaction?')) return;
+    
+    try {
+        const response = await fetch(`${API_URL}/transactions/${id}`, {
+            method: 'DELETE',
+            headers: getAuthHeaders()  // ✅ AUTH INCLUDED
+        });
+        
+        if (response.ok) {
+            loadTransactions();
+            showNotification('Transaction deleted successfully!', 'success');
+        } else {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Failed to delete transaction');
+        }
+    } catch (error) {
+        console.error('Error deleting transaction:', error);
+        showNotification(error.message || 'Error deleting transaction', 'error');
+    }
+}
+
+function exportTransactions() {
+    const csv = [
+        ['ID', 'User', 'Email', 'Type', 'Amount', 'Status', 'Date', 'Description', 'Reference'],
+        ...filteredTransactions.map(txn => [
+            txn.id || txn._id,
+            txn.userName || txn.user?.name || 'N/A',
+            txn.userEmail || txn.user?.email || 'N/A',
+            txn.type,
+            txn.amount,
+            txn.status,
+            formatDate(txn.createdAt),
+            txn.description || '',
+            txn.reference || ''
+        ])
+    ].map(row => row.join(',')).join('\n');
+    
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `transactions_${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+}
+
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+}
+
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+        <span>${message}</span>
+    `;
+    document.body.appendChild(notification);
+    setTimeout(() => notification.classList.add('show'), 10);
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+    </script>
+</body>
+</html>

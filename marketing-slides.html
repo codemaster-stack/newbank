@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketing Slides Management - Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- <link rel="stylesheet" href="css/admin-slides.css"> -->
+     <style>
+        /* css/admin-slides.css */
+/* Complete styling for marketing slides admin page */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f5f7fa;
+    color: #333;
+}
+
+.admin-container {
+    padding: 30px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Header Section */
+.admin-header {
+    background: white;
+    padding: 25px 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.admin-header h1 {
+    font-size: 1.8rem;
+    color: #2d3748;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.header-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* Buttons */
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-success {
+    background: #48bb78;
+    color: white;
+}
+
+.btn-success:hover {
+    background: #38a169;
+    transform: translateY(-2px);
+}
+
+.btn-danger {
+    background: #f56565;
+    color: white;
+    font-size: 0.95rem;
+}
+
+.btn-danger:hover {
+    background: #e53e3e;
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background: #e2e8f0;
+    color: #4a5568;
+}
+
+.btn-secondary:hover {
+    background: #cbd5e0;
+}
+
+/* Slides Container */
+.slides-container {
+    display: grid;
+    gap: 20px;
+}
+
+.slide-card {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    display: grid;
+    grid-template-columns: 200px 1fr auto;
+    gap: 25px;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.slide-card:hover {
+    box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+    transform: translateY(-2px);
+}
+
+/* Slide Preview */
+.slide-preview {
+    width: 200px;
+    height: 120px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 2.5rem;
+    flex-shrink: 0;
+}
+
+/* Slide gradient classes */
+.mk-slide3 { 
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+}
+.mk-slide4 { 
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); 
+}
+.mk-slide5 { 
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); 
+}
+
+/* Slide Info */
+.slide-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.slide-info h3 {
+    font-size: 1.4rem;
+    color: #2d3748;
+    margin-bottom: 8px;
+}
+
+.slide-info p {
+    color: #718096;
+    line-height: 1.6;
+    margin-bottom: 12px;
+}
+
+.slide-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    font-size: 0.9rem;
+    color: #a0aec0;
+}
+
+.slide-meta span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.status-badge {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.status-active {
+    background: #c6f6d5;
+    color: #22543d;
+}
+
+.status-inactive {
+    background: #fed7d7;
+    color: #742a2a;
+}
+
+/* Slide Actions */
+.slide-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    padding: 35px;
+    max-width: 700px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    z-index: 1001;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.modal-header h2 {
+    font-size: 1.6rem;
+    color: #2d3748;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    cursor: pointer;
+    color: #a0aec0;
+    transition: color 0.3s;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.close-btn:hover {
+    color: #4a5568;
+}
+
+/* Form Styles */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #2d3748;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.form-group small {
+    display: block;
+    margin-top: 6px;
+    color: #a0aec0;
+    font-size: 0.85rem;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group input[type="file"],
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: all 0.3s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-group textarea {
+    resize: vertical;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-weight: normal !important;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+/* Image Preview */
+.image-preview {
+    width: 100%;
+    height: 180px;
+    border: 2px dashed #cbd5e0;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+    background-size: cover;
+    background-position: center;
+    color: #a0aec0;
+    gap: 8px;
+}
+
+.image-preview i {
+    font-size: 2.5rem;
+}
+
+.image-preview.has-image {
+    border-style: solid;
+    border-color: #48bb78;
+}
+
+/* Form Actions */
+.form-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 30px;
+    padding-top: 25px;
+    border-top: 2px solid #e2e8f0;
+}
+
+/* Loading & Empty States */
+.loading,
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+.loading i {
+    font-size: 3rem;
+    color: #667eea;
+    margin-bottom: 15px;
+}
+
+.empty-state i {
+    font-size: 4rem;
+    color: #cbd5e0;
+    margin-bottom: 20px;
+    display: block;
+}
+
+.empty-state h3 {
+    font-size: 1.4rem;
+    color: #4a5568;
+    margin-bottom: 10px;
+}
+
+.empty-state p {
+    color: #a0aec0;
+    margin-bottom: 20px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .admin-container {
+        padding: 15px;
+    }
+
+    .admin-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .admin-header h1 {
+        font-size: 1.4rem;
+    }
+
+    .header-actions {
+        flex-direction: column;
+    }
+
+    .slide-card {
+        grid-template-columns: 1fr;
+        padding: 20px;
+    }
+
+    .slide-preview {
+        width: 100%;
+        height: 150px;
+    }
+
+    .slide-actions {
+        flex-direction: row;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .modal-content {
+        padding: 25px;
+    }
+
+    .modal-header h2 {
+        font-size: 1.3rem;
+    }
+}
+        </style>
+</head>
+<body>
+     <div class="admin-container">
+        <!-- Header -->
+        <div class="admin-header">
+            <h1><i class="fas fa-images"></i> Marketing Slides Management</h1>
+            <div class="header-actions">
+                <button class="btn btn-primary" onclick="openModal()">
+                    <i class="fas fa-plus"></i> Add New Slide
+                </button>
+                <a href="superadmin-dashboard.html" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
+        </div>
+
+        <!-- Slides List -->
+        <div class="slides-container" id="slidesContainer">
+            <div class="loading">
+                <i class="fas fa-spinner fa-spin"></i> Loading slides...
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Add/Edit Slide -->
+    <div class="modal" id="slideModal">
+        <div class="modal-overlay" onclick="closeModal()"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Add New Slide</h2>
+                <button class="close-btn" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <form id="slideForm" onsubmit="saveSlide(event)">
+                <input type="hidden" id="slideId">
+                <input type="hidden" id="currentImageUrl" value="">
+
+                <div class="form-group">
+                    <label for="title">Title *</label>
+                    <input type="text" id="title" required placeholder="Enter slide title">
+                </div>
+
+                <div class="form-group">
+                    <label for="subtitle">Subtitle *</label>
+                    <textarea id="subtitle" required placeholder="Enter slide description" rows="4"></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="buttonText">Button Text *</label>
+                        <input type="text" id="buttonText" required value="Learn More">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="buttonAction">Button Action *</label>
+                        <input type="text" id="buttonAction" required value="showPersonalLoan()" 
+                               placeholder="e.g., showPersonalLoan()">
+                        <small>Function name for button click action</small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="backgroundImage">Background Image (Optional)</label>
+                    <input type="file" id="backgroundImage" accept="image/*" onchange="previewImage(event)">
+                    <div id="imagePreview" class="image-preview">
+                        <i class="fas fa-image"></i>
+                        <span>No image selected</span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="slideClass">Slide Style *</label>
+                        <select id="slideClass" required>
+                            <option value="mk-slide3">Purple Gradient</option>
+                            <option value="mk-slide4">Pink Gradient</option>
+                            <option value="mk-slide5">Blue Gradient</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sortOrder">Display Order *</label>
+                        <input type="number" id="sortOrder" required value="0" min="0">
+                        <small>Lower numbers appear first</small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="isActive" checked>
+                        <span>Active (Show on website)</span>
+                    </label>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save"></i> Save Slide
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+
+const API_URL = 'https://valley.pvbonline.online/api';
+
+// Load slides on page load
+document.addEventListener('DOMContentLoaded', () => {
+    loadSlides();
+    initializeEventListeners();
+});
+
+// Initialize event listeners
+function initializeEventListeners() {
+    // Close modal when clicking outside
+    const modal = document.getElementById('slideModal');
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+    }
+    
+    // Handle form submission
+    const form = document.getElementById('slideForm');
+    if (form) {
+        form.addEventListener('submit', saveSlide);
+    }
+    
+    // Handle image preview
+    const imageInput = document.getElementById('backgroundImage');
+    if (imageInput) {
+        imageInput.addEventListener('change', previewImage);
+    }
+}
+
+// Load all slides
+async function loadSlides() {
+    const container = document.getElementById('slidesContainer');
+    
+    if (!container) {
+        console.error('Slides container not found');
+        return;
+    }
+    
+    // Show loading state
+    container.innerHTML = '<div class="loading-state"><i class="fas fa-spinner fa-spin"></i><p>Loading slides...</p></div>';
+    
+    try {
+        const response = await fetch(`${API_URL}/slides`, {
+            headers: {
+                'Accept': 'application/json'
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const slides = await response.json();
+        
+        console.log('Loaded slides:', slides); // Debug log
+        
+        if (!Array.isArray(slides) || slides.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-inbox"></i>
+                    <p>No slides yet. Add your first slide!</p>
+                    <button class="btn btn-primary" onclick="openModal()">
+                        <i class="fas fa-plus"></i> Add First Slide
+                    </button>
+                </div>
+            `;
+            return;
+        }
+        
+        // Sort slides by sortOrder
+        slides.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+        
+        container.innerHTML = slides.map(slide => createSlideCard(slide)).join('');
+        
+    } catch (error) {
+        console.error('Error loading slides:', error);
+        container.innerHTML = `
+            <div class="error-state">
+                <i class="fas fa-exclamation-triangle"></i>
+                <p>Error loading slides. Please try again.</p>
+                <button class="btn btn-secondary" onclick="loadSlides()">
+                    <i class="fas fa-refresh"></i> Retry
+                </button>
+            </div>
+        `;
+    }
+}
+
+// Create slide card HTML
+function createSlideCard(slide) {
+    // Ensure image URL is properly formatted
+    let imageUrl = '';
+    if (slide.backgroundImage) {
+        imageUrl = slide.backgroundImage.startsWith('http') 
+            ? slide.backgroundImage 
+            : `${API_URL.replace('/api', '')}${slide.backgroundImage}`;
+    }
+    
+    return `
+        <div class="slide-card ${slide.isActive ? '' : 'inactive'}" data-slide-id="${slide.id}">
+            <div class="slide-preview ${slide.slideClass || 'mk-slide1'}">
+                ${imageUrl ? `<img src="${imageUrl}" alt="${slide.title}" onerror="handleImageError(this)">` : '<div class="no-image"><i class="fas fa-image"></i></div>'}
+                <div class="slide-overlay">
+                    <h3>${escapeHtml(slide.title)}</h3>
+                    <p>${escapeHtml(slide.subtitle || '')}</p>
+                    ${slide.buttonText ? `<span class="button-preview">${escapeHtml(slide.buttonText)}</span>` : ''}
+                </div>
+            </div>
+            <div class="slide-info">
+                <div class="slide-meta">
+                    <span class="badge ${slide.isActive ? 'badge-success' : 'badge-secondary'}">
+                        ${slide.isActive ? '✓ Active' : '○ Inactive'}
+                    </span>
+                    <span class="badge badge-info">Order: ${slide.sortOrder || 0}</span>
+                    ${slide.slideClass ? `<span class="badge badge-light">${slide.slideClass}</span>` : ''}
+                </div>
+                <div class="slide-actions">
+                    <button class="btn-icon btn-edit" onclick="editSlide(${slide.id})" title="Edit slide">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn-icon btn-toggle" onclick="toggleSlideStatus(${slide.id}, ${!slide.isActive})" title="${slide.isActive ? 'Deactivate' : 'Activate'}">
+                        <i class="fas fa-${slide.isActive ? 'eye-slash' : 'eye'}"></i>
+                    </button>
+                    <button class="btn-icon btn-delete" onclick="deleteSlide(${slide.id})" title="Delete slide">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Handle image loading errors
+function handleImageError(img) {
+    img.style.display = 'none';
+    img.parentElement.innerHTML = '<div class="no-image"><i class="fas fa-image-slash"></i><span>Image not found</span></div>';
+}
+
+// Escape HTML to prevent XSS
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Open modal for adding new slide
+function openModal() {
+    const modal = document.getElementById('slideModal');
+    const form = document.getElementById('slideForm');
+    
+    document.getElementById('modalTitle').textContent = 'Add New Slide';
+    if (form) form.reset();
+    document.getElementById('slideId').value = '';
+    document.getElementById('imagePreview').innerHTML = '<i class="fas fa-image"></i><span>No image selected</span>';
+    document.getElementById('currentImageUrl').value = '';
+    
+    // Set default values
+    document.getElementById('sortOrder').value = '0';
+    document.getElementById('isActive').checked = true;
+    document.getElementById('slideClass').value = 'mk-slide1';
+    
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden'; // Prevent background scroll
+}
+
+// Close modal
+function closeModal() {
+    const modal = document.getElementById('slideModal');
+    modal.classList.remove('active');
+    document.body.style.overflow = ''; // Restore scroll
+}
+
+// Preview image before upload
+function previewImage(event) {
+    const preview = document.getElementById('imagePreview');
+    const file = event.target.files[0];
+    
+    if (file) {
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+            showNotification('Please select a valid image file', 'error');
+            event.target.value = '';
+            return;
+        }
+        
+        // Validate file size (max 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            showNotification('Image size should be less than 5MB', 'error');
+            event.target.value = '';
+            return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+// Save slide (create or update)
+async function saveSlide(event) {
+    event.preventDefault();
+    
+    const submitBtn = event.target.querySelector('button[type="submit"]');
+    const originalBtnText = submitBtn.innerHTML;
+    
+    // Disable button and show loading
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+    
+    const slideId = document.getElementById('slideId').value;
+    const formData = new FormData();
+    
+    // Validate required fields
+    const title = document.getElementById('title').value.trim();
+    if (!title) {
+        showNotification('Title is required', 'error');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalBtnText;
+        return;
+    }
+    
+    formData.append('title', title);
+    formData.append('subtitle', document.getElementById('subtitle').value.trim());
+    formData.append('buttonText', document.getElementById('buttonText').value.trim());
+    formData.append('buttonAction', document.getElementById('buttonAction').value.trim());
+    formData.append('slideClass', document.getElementById('slideClass').value);
+    formData.append('sortOrder', document.getElementById('sortOrder').value);
+    formData.append('isActive', document.getElementById('isActive').checked);
+    
+    const imageFile = document.getElementById('backgroundImage').files[0];
+    if (imageFile) {
+        formData.append('backgroundImage', imageFile);
+    } else if (slideId) {
+        // If updating and no new image, keep the old one
+        const currentImageUrl = document.getElementById('currentImageUrl').value;
+        if (currentImageUrl) {
+            formData.append('existingImageUrl', currentImageUrl);
+        }
+    }
+    
+    try {
+        const url = slideId ? `${API_URL}/slides/${slideId}` : `${API_URL}/slides`;
+        const method = slideId ? 'PUT' : 'POST';
+        
+        const response = await fetch(url, {
+            method: method,
+            body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+            closeModal();
+            await loadSlides(); // Reload slides
+            showNotification(slideId ? 'Slide updated successfully!' : 'Slide created successfully!', 'success');
+        } else {
+            throw new Error(result.message || 'Failed to save slide');
+        }
+        
+    } catch (error) {
+        console.error('Error saving slide:', error);
+        showNotification(error.message || 'Error saving slide. Please try again.', 'error');
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalBtnText;
+    }
+}
+
+// Edit slide
+async function editSlide(id) {
+    try {
+        const response = await fetch(`${API_URL}/slides/${id}`, {
+            headers: {
+                'Accept': 'application/json'
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to load slide');
+        }
+        
+        const slide = await response.json();
+        
+        document.getElementById('modalTitle').textContent = 'Edit Slide';
+        document.getElementById('slideId').value = slide.id;
+        document.getElementById('title').value = slide.title || '';
+        document.getElementById('subtitle').value = slide.subtitle || '';
+        document.getElementById('buttonText').value = slide.buttonText || '';
+        document.getElementById('buttonAction').value = slide.buttonAction || '';
+        document.getElementById('slideClass').value = slide.slideClass || 'mk-slide1';
+        document.getElementById('sortOrder').value = slide.sortOrder || 0;
+        document.getElementById('isActive').checked = slide.isActive;
+        
+        // Store current image URL
+        document.getElementById('currentImageUrl').value = slide.backgroundImage || '';
+        
+        // Show current image preview
+        if (slide.backgroundImage) {
+            const imageUrl = slide.backgroundImage.startsWith('http') 
+                ? slide.backgroundImage 
+                : `${API_URL.replace('/api', '')}${slide.backgroundImage}`;
+            document.getElementById('imagePreview').innerHTML = `<img src="${imageUrl}" alt="Current image">`;
+        } else {
+            document.getElementById('imagePreview').innerHTML = '<i class="fas fa-image"></i><span>No image</span>';
+        }
+        
+        document.getElementById('slideModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+        
+    } catch (error) {
+        console.error('Error loading slide:', error);
+        showNotification('Error loading slide data. Please try again.', 'error');
+    }
+}
+
+// Toggle slide active status
+async function toggleSlideStatus(id, newStatus) {
+    try {
+        const response = await fetch(`${API_URL}/slides/${id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ isActive: newStatus })
+        });
+        
+        if (response.ok) {
+            await loadSlides();
+            showNotification(`Slide ${newStatus ? 'activated' : 'deactivated'} successfully!`, 'success');
+        } else {
+            throw new Error('Failed to toggle slide status');
+        }
+        
+    } catch (error) {
+        console.error('Error toggling slide status:', error);
+        showNotification('Error updating slide status. Please try again.', 'error');
+    }
+}
+
+// Delete slide
+async function deleteSlide(id) {
+    if (!confirm('Are you sure you want to delete this slide? This action cannot be undone.')) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${API_URL}/slides/${id}`, {
+            method: 'DELETE'
+        });
+        
+        if (response.ok) {
+            await loadSlides();
+            showNotification('Slide deleted successfully!', 'success');
+        } else {
+            const result = await response.json();
+            throw new Error(result.message || 'Failed to delete slide');
+        }
+        
+    } catch (error) {
+        console.error('Error deleting slide:', error);
+        showNotification('Error deleting slide. Please try again.', 'error');
+    }
+}
+
+// Show notification
+function showNotification(message, type = 'info') {
+    // Remove any existing notifications
+    const existingNotifications = document.querySelectorAll('.notification');
+    existingNotifications.forEach(n => n.remove());
+    
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    
+    const icon = type === 'success' ? 'check-circle' : 
+                 type === 'error' ? 'exclamation-circle' : 
+                 type === 'warning' ? 'exclamation-triangle' : 'info-circle';
+    
+    notification.innerHTML = `
+        <i class="fas fa-${icon}"></i>
+        <span>${message}</span>
+        <button class="notification-close" onclick="this.parentElement.remove()">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Trigger animation
+    requestAnimationFrame(() => {
+        notification.classList.add('show');
+    });
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+            if (notification.parentElement) {
+                notification.remove();
+            }
+        }, 300);
+    }, 5000);
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+    // Close modal on Escape
+    if (e.key === 'Escape') {
+        const modal = document.getElementById('slideModal');
+        if (modal && modal.classList.contains('active')) {
+            closeModal();
+        }
+    }
+    
+    // Open add modal on Ctrl/Cmd + N
+    if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+        e.preventDefault();
+        openModal();
+    }
+});
+    </script>
+</body>
+</html>
