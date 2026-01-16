@@ -234,7 +234,7 @@
   }
 
   try {
-    const res = await fetch('https://valley.pvbonline.online/api/transaction/create-pin', {
+    const res = await fetch('https://newbank-api.onrender.com/api/transaction/create-pin', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -284,7 +284,7 @@
       confirmBtn.textContent = "Processing...";
     }
 
-    const res = await fetch('https://valley.pvbonline.online/api/users/fund-card', {
+    const res = await fetch('https://newbank-api.onrender.com/api/users/fund-card', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -330,7 +330,7 @@ window.sendForgotPinEmail = async function() {
       btn.textContent = "Sending...";
     }
 
-    const res = await fetch('https://valley.pvbonline.online/api/transaction/forgot-pin', {
+    const res = await fetch('https://newbank-api.onrender.com/api/transaction/forgot-pin', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -363,7 +363,7 @@ window.sendForgotPinEmail = async function() {
         try {
           document.getElementById('loadingCards').style.display = 'block';
           
-          const res = await fetch('https://valley.pvbonline.online/api/users/my-cards', {
+          const res = await fetch('https://newbank-api.onrender.com/api/users/my-cards', {
             headers: { 
               'Authorization': `Bearer ${localStorage.getItem('token')}` 
             }
@@ -410,7 +410,7 @@ window.sendForgotPinEmail = async function() {
       // }
 async function checkPinStatus() {
   try {
-    const res = await fetch('https://valley.pvbonline.online/api/users/check-pin-status', {
+    const res = await fetch('https://newbank-api.onrender.com/api/users/check-pin-status', {
       headers: { 
         'Authorization': `Bearer ${localStorage.getItem('token')}`,
         'Content-Type': 'application/json'

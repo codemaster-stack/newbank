@@ -47,7 +47,7 @@ $("#backToLoginFromForgot")?.addEventListener("click", () => {
 $("#closeReset")?.addEventListener("click", () => closeModal(resetModal));
 
 // =================== FORM HANDLERS ===================
-const API_URL = "https://valley.pvbonline.online/api/users"; // update if deployed
+const API_URL = "https://newbank-api.onrender.com/api/users"; // update if deployed
 
 // Utility function to handle button loading state
 const setButtonLoading = (button, isLoading, text = "Processing...") => {
@@ -368,7 +368,7 @@ if (supportForm) {
     };
 
     try {
-      const res = await fetch("https://valley.pvbonline.online/api/contact", {
+      const res = await fetch("https://newbank-api.onrender.com/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -489,7 +489,7 @@ document.getElementById("loanApplicationForm").addEventListener("submit", async 
   };
 
   try {
-    const res = await fetch("https://valley.pvbonline.online/api/public/loans/apply", {
+    const res = await fetch("https://newbank-api.onrender.com/api/public/loans/apply", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(loanData),
@@ -517,7 +517,7 @@ document.getElementById("loanApplicationForm").addEventListener("submit", async 
 // Add this to your visitor/user chat JavaScript file
 
 // Typing indicator handling for visitor
-const socket = io("https://valley.pvbonline.online", {
+const socket = io("https://newbank-api.onrender.com", {
   transports: ["websocket"],
   withCredentials: true
 });

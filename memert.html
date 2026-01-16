@@ -838,7 +838,7 @@
       // ✅ NEW CODE
 async function loadUserCards() {
     try {
-        const response = await fetch('https://valley.pvbonline.online/api/users/cards', {
+        const response = await fetch('https://newbank-api.onrender.com/api/users/cards', {
             // ↑ Fixed domain: valley.pvbonline.online
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -927,7 +927,7 @@ async function loadUserCards() {
     payBtn.disabled = true;
 
     try {
-        const response = await fetch('https://valley.pvbonline.online/api/user/card-purchase', {
+        const response = await fetch('https://newbank-api.onrender.com/api/user/card-purchase', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -996,7 +996,7 @@ document.getElementById('forgotCardPinForm').addEventListener('submit', async fu
     const selectedCard = document.getElementById('cardSelectForReset').value;
 
     try {
-        const res = await fetch('https://valley.pvbonline.online/api/users/card-reset-pin', {
+        const res = await fetch('https://newbank-api.onrender.com/api/users/card-reset-pin', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1077,7 +1077,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       try {
-        const res = await fetch("https://valley.pvbonline.online/api/users/reset-card-pin", {
+        const res = await fetch("https://newbank-api.onrender.com/api/users/reset-card-pin", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

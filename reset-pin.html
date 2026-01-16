@@ -42,7 +42,7 @@
       }
 
       try {
-        const res = await fetch("https://valley.pvbonline.online/api/users/reset-pin", {
+        const res = await fetch("https://newbank-api.onrender.com/api/users/reset-pin", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ token, newPin })

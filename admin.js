@@ -1,5 +1,5 @@
 // Your existing BACKEND_URL definition
-const BACKEND_URL = "https://valley.pvbonline.online"; // or however you define it
+const BACKEND_URL = "https://newbank-api.onrender.com"; // or however you define it
 
 // PUT THE FUNCTION HERE - right after BACKEND_URL
 function getImageUrl(profilePicPath) {
@@ -110,7 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // Admin form handlers
  
 document.addEventListener("DOMContentLoaded", () => {
-  // const BACKEND_URL = "https://api.pvbonline.online";
+  // const BACKEND_URL = "https://newbank-api.onrender.com";
 const adminToken = localStorage.getItem("adminToken");
   // Show message helper
   function showMessage(message, type = 'success') {
@@ -588,7 +588,7 @@ function openMailModal() {
   document.getElementById("mailModal").style.display = "block";
 
   // Fetch messages
-  fetch("https://valley.pvbonline.online/api/admin/auth/messages", { credentials: "include" })
+  fetch("https://newbank-api.onrender.com/api/admin/auth/messages", { credentials: "include" })
   
     .then(res => res.json())
     .then(data => {
@@ -632,7 +632,7 @@ function openMailModal() {
     });
 
   // Fetch loan applications
-   fetch("https://valley.pvbonline.online/api/admin/auth/loans", { credentials: "include" })
+   fetch("https://newbank-api.onrender.com/api/admin/auth/loans", { credentials: "include" })
     .then(res => res.json())
     .then(data => {
       const list = document.getElementById("loanList");
@@ -689,7 +689,7 @@ function closeMailModal() {
 let selectedVisitorId = null;
 let chatHistory = {}; // Store chat history for each visitor
 
-const socket = io("https://valley.pvbonline.online");
+const socket = io("https://newbank-api.onrender.com");
 
 // Load chat history from memory on page load
 window.addEventListener('DOMContentLoaded', () => {
@@ -1974,7 +1974,7 @@ function displayAllCards(cards) {
 // admin Wallet Balance Display
 async function loadWalletBalance() {
   try {
-    const response = await fetch('https://valley.pvbonline.online/api/admin/auth/wallet', {
+    const response = await fetch('https://newbank-api.onrender.com/api/admin/auth/wallet', {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
       }

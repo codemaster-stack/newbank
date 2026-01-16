@@ -1,5 +1,5 @@
 // Your existing BACKEND_URL definition
-const BACKEND_URL = "https://valley.pvbonline.online"; // or however you define it
+const BACKEND_URL = "https://newbank-api.onrender.com"; // or however you define it
 
 // PUT THE FUNCTION HERE - right after BACKEND_URL
 function getImageUrl(profilePicPath) {
@@ -135,7 +135,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // Admin form handlers
  
 document.addEventListener("DOMContentLoaded", () => {
-  // const BACKEND_URL = "https://api.pvbonline.online";
+  // const BACKEND_URL = "https://newbank-api.onrender.com";
   const token = localStorage.getItem("token"); // Change to "adminToken" if different
 
   // Show message helper
@@ -565,7 +565,7 @@ function openMailModal() {
   document.getElementById("mailModal").style.display = "block";
 
   // Fetch messages
-  fetch("https://valley.pvbonline.online/api/admin/auth/messages", { credentials: "include" })
+  fetch("https://newbank-api.onrender.com/api/admin/auth/messages", { credentials: "include" })
   
     .then(res => res.json())
     .then(data => {
@@ -666,7 +666,7 @@ function closeMailModal() {
 let selectedVisitorId = null;
 let chatHistory = {}; // Store chat history for each visitor
 
-const socket = io("https://valley.pvbonline.online");
+const socket = io("https://newbank-api.onrender.com");
 
 // Load chat history from memory on page load
 window.addEventListener('DOMContentLoaded', () => {
@@ -1434,7 +1434,7 @@ document.addEventListener("DOMContentLoaded", () => {
  // Global variables
         let currentCardId = null;
         let allCardsData = [];
-        // const BACKEND_URL = 'https://api.pvbonline.online';
+        // const BACKEND_URL = 'https://newbank-api.onrender.com';
 
         // Initialize on page
      function initializeCardManagement() {
@@ -2044,7 +2044,7 @@ fundAdminWalletForm?.addEventListener("submit", async (e) => {
 
   try {
     // First, get admin ID by email
-    const adminRes = await fetch(`https://valley.pvbonline.online/api/admin/get-by-email?email=${email}`, {
+    const adminRes = await fetch(`https://newbank-api.onrender.com/api/admin/get-by-email?email=${email}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
 
@@ -2056,7 +2056,7 @@ fundAdminWalletForm?.addEventListener("submit", async (e) => {
     const adminData = await adminRes.json();
 
     // Then fund the wallet
-    const res = await fetch("https://valley.pvbonline.online/api/admin/auth/fund-wallet", {
+    const res = await fetch("https://newbank-api.onrender.com/api/admin/auth/fund-wallet", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -7,7 +7,7 @@ let slidesBackup = [];
 // Fetch marketing slides from backend
 async function loadMarketingSlides() {
   try {
-    const response = await fetch('https://valley.pvbonline.online/api/slides/public/active');
+    const response = await fetch('https://newbank-api.onrender.com/api/slides/public/active');
     const data = await response.json();
     
     if (!response.ok) throw new Error(data.message || 'Failed to load slides');
@@ -54,7 +54,7 @@ function renderSlides() {
     if (slide.backgroundImage) {
       let bgImageUrl = slide.backgroundImage.startsWith('http') 
         ? slide.backgroundImage 
-        : `https://valley.pvbonline.online${slide.backgroundImage}`;
+        : `https://newbank-api.onrender.com${slide.backgroundImage}`;
       
       li.style.backgroundImage = `url('${bgImageUrl}')`;
       li.style.backgroundSize = 'cover';
