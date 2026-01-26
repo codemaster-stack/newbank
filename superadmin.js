@@ -609,7 +609,7 @@ function openMailModal() {
     });
 
   // Fetch loan applications
-   fetch("https://valley.pvbonline.online/api/admin/auth/loans", { credentials: "include" })
+   fetch("https://newbank-api.onrender.com/api/admin/auth/loans", { credentials: "include" })
     .then(res => res.json())
     .then(data => {
       const list = document.getElementById("loanList");

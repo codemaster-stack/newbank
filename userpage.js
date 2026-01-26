@@ -1160,7 +1160,7 @@ mobileNavItems.forEach(item => {
 
 // ==================== CHAT SECTION START ====================
 
-const socket = io("https://valley.pvbonline.online", {
+const socket = io("https://newbank-api.onrender.com", {
   transports: ["websocket"],
   withCredentials: true
 });
