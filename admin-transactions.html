@@ -797,6 +797,7 @@ async function loadTransactions() {
         }
         
         const data = await response.json();
+        console.log('RAW TRANSACTIONS RESPONSE:', data);
         allTransactions = data.transactions || data;
         filteredTransactions = [...allTransactions];
         updateStats();
