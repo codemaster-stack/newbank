@@ -942,11 +942,18 @@ function applyFilters() {
     const dateTo = document.getElementById('filterDateTo').value;
     
     filteredTransactions = allTransactions.filter(txn => {
+        // const matchUser = !userFilter || 
+        //     (txn.userName && txn.userName.toLowerCase().includes(userFilter)) || 
+        //     (txn.userEmail && txn.userEmail.toLowerCase().includes(userFilter)) ||
+        //     (txn.user?.name && txn.user.name.toLowerCase().includes(userFilter)) ||
+        //     (txn.user?.email && txn.user.email.toLowerCase().includes(userFilter));
         const matchUser = !userFilter || 
-            (txn.userName && txn.userName.toLowerCase().includes(userFilter)) || 
-            (txn.userEmail && txn.userEmail.toLowerCase().includes(userFilter)) ||
-            (txn.user?.name && txn.user.name.toLowerCase().includes(userFilter)) ||
-            (txn.user?.email && txn.user.email.toLowerCase().includes(userFilter));
+    (txn.userName && txn.userName.toLowerCase().includes(userFilter)) || 
+    (txn.userEmail && txn.userEmail.toLowerCase().includes(userFilter)) ||
+    (txn.user?.name && txn.user.name.toLowerCase().includes(userFilter)) ||
+    (txn.user?.email && txn.user.email.toLowerCase().includes(userFilter)) ||
+    (txn.user?.username && txn.user.username.toLowerCase().includes(userFilter));
+
         
         const matchType = !typeFilter || txn.type === typeFilter;
         const matchStatus = !statusFilter || txn.status === statusFilter;
