@@ -785,7 +785,8 @@ async function loadTransactions() {
     try {
         const response = await fetch(`${API_URL}/transactions`, {
             method: 'GET',
-            headers: getAuthHeaders()
+            headers: getAuthHeaders(),
+            cache: 'no-store'
         });
         
         if (!response.ok) {
@@ -818,7 +819,8 @@ async function loadUsers() {
 
         const response = await fetch(`${API_URL}/users`, {
             method: 'GET',
-            headers: getAuthHeaders()
+            headers: getAuthHeaders(),
+             cache: 'no-store'
         });
         
         if (!response.ok) {
