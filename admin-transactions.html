@@ -1017,7 +1017,7 @@ async function editTransaction(id) {
         const transaction = txn.transaction || txn;
         
         document.getElementById('modalTitle').textContent = 'Edit Transaction';
-        document.getElementById('transactionId').value = transaction.id || transaction._id;
+        document.getElementById('transactionId').value = transaction._id;
         document.getElementById('userId').value = transaction.userId || transaction.user?._id;
         document.getElementById('transactionType').value = transaction.type;
         document.getElementById('amount').value = transaction.amount;
