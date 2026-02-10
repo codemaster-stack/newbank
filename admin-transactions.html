@@ -879,10 +879,15 @@ function renderTransactions() {
         <tr>
             <td>#${txn.id || txn._id}</td>
             <td>
+                // <div class="user-info">
+                //     <strong>${txn.userName || txn.user?.name || 'N/A'}</strong>
+                //     <small>${txn.userEmail || txn.user?.email || 'N/A'}</small>
+                // </div>
                 <div class="user-info">
-                    <strong>${txn.userName || txn.user?.name || 'N/A'}</strong>
-                    <small>${txn.userEmail || txn.user?.email || 'N/A'}</small>
+                 <strong>${txn.userId?.name || txn.userId?.username || 'N/A'}</strong>
+                 <small>${txn.userId?.email || 'N/A'}</small>
                 </div>
+
             </td>
             <td><span class="badge badge-${txn.type}">${txn.type}</span></td>
             <td class="amount ${txn.type === 'withdrawal' ? 'negative' : 'positive'}">
@@ -947,12 +952,10 @@ function applyFilters() {
         //     (txn.userEmail && txn.userEmail.toLowerCase().includes(userFilter)) ||
         //     (txn.user?.name && txn.user.name.toLowerCase().includes(userFilter)) ||
         //     (txn.user?.email && txn.user.email.toLowerCase().includes(userFilter));
-        const matchUser = !userFilter || 
-    (txn.userName && txn.userName.toLowerCase().includes(userFilter)) || 
-    (txn.userEmail && txn.userEmail.toLowerCase().includes(userFilter)) ||
-    (txn.user?.name && txn.user.name.toLowerCase().includes(userFilter)) ||
-    (txn.user?.email && txn.user.email.toLowerCase().includes(userFilter)) ||
-    (txn.user?.username && txn.user.username.toLowerCase().includes(userFilter));
+        const matchUser = !userFilter ||
+    (txn.userId?.name && txn.userId.name.toLowerCase().includes(userFilter)) ||
+    (txn.userId?.email && txn.userId.email.toLowerCase().includes(userFilter)) ||
+    (txn.userId?.username && txn.userId.username.toLowerCase().includes(userFilter));
 
         
         const matchType = !typeFilter || txn.type === typeFilter;
