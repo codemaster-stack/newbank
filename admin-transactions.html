@@ -896,16 +896,27 @@ function renderTransactions() {
             <td><span class="status-badge status-${txn.status}">${txn.status}</span></td>
             <td>${formatDate(txn.createdAt)}</td>
             <td class="description">${txn.description || 'N/A'}</td>
+            // <td>
+            //     <div class="action-buttons">
+            //         <button class="btn-icon btn-edit" onclick="editTransaction('${txn.id || txn._id}')" title="Edit">
+            //             <i class="fas fa-edit"></i>
+            //         </button>
+            //         <button class="btn-icon btn-delete" onclick="deleteTransaction('${txn.id || txn._id}')" title="Delete">
+            //             <i class="fas fa-trash"></i>
+            //         </button>
+            //     </div>
+            // </td>
             <td>
-                <div class="action-buttons">
-                    <button class="btn-icon btn-edit" onclick="editTransaction('${txn.id || txn._id}')" title="Edit">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="btn-icon btn-delete" onclick="deleteTransaction('${txn.id || txn._id}')" title="Delete">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
-            </td>
+    <div class="action-buttons">
+        <button class="btn-icon btn-edit" onclick="editTransaction('${String(txn._id)}')" title="Edit">
+            <i class="fas fa-edit"></i>
+        </button>
+        <button class="btn-icon btn-delete" onclick="deleteTransaction('${String(txn._id)}')" title="Delete">
+            <i class="fas fa-trash"></i>
+        </button>
+    </div>
+</td>
+
         </tr>
     `).join('');
     
