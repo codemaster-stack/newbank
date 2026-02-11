@@ -582,15 +582,13 @@
             <div class="filter-group">
                 <label for="filterType">Type</label>
                 <select id="filterType">
-                    <option value="">All Types</option>
-                    <option value="deposit">Deposit</option>
-                    <option value="withdrawal">Withdrawal</option>
-                    <option value="transfer">Transfer</option>
-                    <option value="loan">Loan</option>
-                    <option value="payment">Payment</option>
+                 <option value="">All Types</option>
+                 <option value="inflow">Inflow</option>
+                 <option value="outflow">Outflow</option>
                 </select>
+
             </div>
-            <div class="filter-group">
+            <!-- <div class="filter-group">
                 <label for="filterStatus">Status</label>
                 <select id="filterStatus">
                     <option value="">All Status</option>
@@ -599,7 +597,7 @@
                     <option value="failed">Failed</option>
                     <option value="cancelled">Cancelled</option>
                 </select>
-            </div>
+            </div> -->
             <div class="filter-group">
                 <label for="filterDateFrom">From</label>
                 <input type="date" id="filterDateFrom">
@@ -655,7 +653,7 @@
                         <th>User</th>
                         <th>Type</th>
                         <th>Amount</th>
-                        <th>Status</th>
+                        <!-- <th>Status</th> -->
                         <th>Date</th>
                         <th>Description</th>
                         <th>Actions</th>
@@ -663,7 +661,7 @@
                 </thead>
                 <tbody id="transactionsBody">
                     <tr>
-                        <td colspan="8" class="loading">
+                        <td colspan="7" class="loading">
                             <i class="fas fa-spinner fa-spin"></i> Loading transactions...
                         </td>
                     </tr>
@@ -697,13 +695,10 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="transactionType">Type *</label>
-                        <select id="transactionType" required>
-                            <option value="deposit">Deposit</option>
-                            <option value="withdrawal">Withdrawal</option>
-                            <option value="transfer">Transfer</option>
-                            <option value="loan">Loan</option>
-                            <option value="payment">Payment</option>
-                        </select>
+                       <select id="transactionType" required>
+                         <option value="inflow">Inflow</option>
+                         <option value="outflow">Outflow</option>
+                       </select>
                     </div>
 
                     <div class="form-group">
@@ -712,7 +707,7 @@
                     </div>
                 </div>
 
-                <div class="form-group">
+                <!-- <div class="form-group">
                     <label for="status">Status *</label>
                     <select id="status" required>
                         <option value="pending">Pending</option>
@@ -720,7 +715,7 @@
                         <option value="failed">Failed</option>
                         <option value="cancelled">Cancelled</option>
                     </select>
-                </div>
+                </div> -->
 
                 <div class="form-group">
                     <label for="description">Description</label>
@@ -745,6 +740,21 @@
     </div>
 
     <script>
+
+        // UI ↔ Backend type mapping
+// const TYPE_TO_BACKEND = {
+//   deposit: "inflow",
+//   transfer: "inflow",
+//   loan: "inflow",
+//   withdrawal: "outflow",
+//   payment: "outflow"
+// };
+
+// const BACKEND_TO_UI = {
+//   inflow: "deposit",
+//   outflow: "withdrawal"
+// };
+
        // FIXED SCRIPT - Matches your backend routes
 // COMPLETE FIXED SCRIPT - All auth headers included
 const API_URL = 'https://newbank-api.onrender.com/api/admin/auth';
@@ -848,24 +858,38 @@ async function loadUsers() {
 }
 
 // Update statistics
+// function updateStats() {
+//     const total = filteredTransactions.length;
+//     const completed = filteredTransactions.filter(t => t.status === 'completed').length;
+//     const pending = filteredTransactions.filter(t => t.status === 'pending').length;
+//     const totalAmount = filteredTransactions
+//         .filter(t => t.status === 'completed')
+//         .reduce((sum, t) => sum + parseFloat(t.amount || 0), 0);
+    
+//     document.getElementById('totalTransactions').textContent = total;
+//     document.getElementById('completedTransactions').textContent = completed;
+//     document.getElementById('pendingTransactions').textContent = pending;
+//     document.getElementById('totalAmount').textContent = `$${totalAmount.toFixed(2)}`;
+// }
 function updateStats() {
     const total = filteredTransactions.length;
-    const completed = filteredTransactions.filter(t => t.status === 'completed').length;
-    const pending = filteredTransactions.filter(t => t.status === 'pending').length;
-    const totalAmount = filteredTransactions
-        .filter(t => t.status === 'completed')
-        .reduce((sum, t) => sum + parseFloat(t.amount || 0), 0);
-    
+
+    const totalAmount = filteredTransactions.reduce((sum, t) => {
+        return sum + parseFloat(t.amount || 0);
+    }, 0);
+
     document.getElementById('totalTransactions').textContent = total;
-    document.getElementById('completedTransactions').textContent = completed;
-    document.getElementById('pendingTransactions').textContent = pending;
+    document.getElementById('completedTransactions').textContent = '-';
+    document.getElementById('pendingTransactions').textContent = '-';
     document.getElementById('totalAmount').textContent = `$${totalAmount.toFixed(2)}`;
 }
+
+
 
 function renderTransactions() {
     const tbody = document.getElementById('transactionsBody');
     if (filteredTransactions.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" class="empty-state">No transactions found</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No transactions found</td></tr>';
         return;
     }
     
@@ -889,11 +913,21 @@ function renderTransactions() {
                 </div>
 
             </td>
-            <td><span class="badge badge-${txn.type}">${txn.type}</span></td>
-            <td class="amount ${txn.type === 'withdrawal' ? 'negative' : 'positive'}">
-                ${txn.type === 'withdrawal' ? '-' : '+'}$${parseFloat(txn.amount).toFixed(2)}
+            // <td><span class="badge badge-${txn.type}">${txn.type}</span></td>
+            <td>
+             <span class="badge badge-${txn.type}">
+            //    ${BACKEND_TO_UI[txn.type] || txn.type}
+            ${txn.type}
+
+             </span>
             </td>
-            <td><span class="status-badge status-${txn.status}">${txn.status}</span></td>
+
+            // <td class="amount ${txn.type === 'withdrawal' ? 'negative' : 'positive'}">
+                <td class="amount ${txn.type === 'outflow' ? 'negative' : 'positive'}">
+
+                ${txn.type === 'outflow' ? '-' : '+'}$${parseFloat(txn.amount).toFixed(2)}
+            </td>
+            // <td><span class="status-badge status-${txn.status}">${txn.status}</span></td>
             <td>${formatDate(txn.createdAt)}</td>
             <td class="description">${txn.description || 'N/A'}</td>
             <td>
@@ -944,24 +978,27 @@ function changePage(page) {
 function applyFilters() {
     const userFilter = document.getElementById('filterUser').value.toLowerCase();
     const typeFilter = document.getElementById('filterType').value;
-    const statusFilter = document.getElementById('filterStatus').value;
+    // const statusFilter = document.getElementById('filterStatus').value;
     const dateFrom = document.getElementById('filterDateFrom').value;
     const dateTo = document.getElementById('filterDateTo').value;
     
     filteredTransactions = allTransactions.filter(txn => {
-        // const matchUser = !userFilter || 
-        //     (txn.userName && txn.userName.toLowerCase().includes(userFilter)) || 
-        //     (txn.userEmail && txn.userEmail.toLowerCase().includes(userFilter)) ||
-        //     (txn.user?.name && txn.user.name.toLowerCase().includes(userFilter)) ||
-        //     (txn.user?.email && txn.user.email.toLowerCase().includes(userFilter));
+      
         const matchUser = !userFilter ||
     (txn.userId?.name && txn.userId.name.toLowerCase().includes(userFilter)) ||
     (txn.userId?.email && txn.userId.email.toLowerCase().includes(userFilter)) ||
     (txn.userId?.username && txn.userId.username.toLowerCase().includes(userFilter));
 
         
-        const matchType = !typeFilter || txn.type === typeFilter;
-        const matchStatus = !statusFilter || txn.status === statusFilter;
+        // const matchType = !typeFilter || txn.type === typeFilter;
+        // const matchType =
+        //  !typeFilter ||
+        //   BACKEND_TO_UI[txn.type] === typeFilter;
+        const matchType =
+       !typeFilter ||
+        txn.type === typeFilter;
+
+        // const matchStatus = !statusFilter || txn.status === statusFilter;
         
         let matchDate = true;
         if (dateFrom || dateTo) {
@@ -970,7 +1007,9 @@ function applyFilters() {
             if (dateTo && txnDate > dateTo) matchDate = false;
         }
         
-        return matchUser && matchType && matchStatus && matchDate;
+        // return matchUser && matchType && matchStatus && matchDate;
+        return matchUser && matchType && matchDate;
+
     });
     
     currentPage = 1;
@@ -981,7 +1020,7 @@ function applyFilters() {
 function clearFilters() {
     document.getElementById('filterUser').value = '';
     document.getElementById('filterType').value = '';
-    document.getElementById('filterStatus').value = '';
+    // document.getElementById('filterStatus').value = '';
     document.getElementById('filterDateFrom').value = '';
     document.getElementById('filterDateTo').value = '';
     filteredTransactions = [...allTransactions];
@@ -1019,9 +1058,14 @@ async function editTransaction(id) {
         document.getElementById('modalTitle').textContent = 'Edit Transaction';
         document.getElementById('transactionId').value = transaction._id;
         document.getElementById('userId').value = transaction.userId || transaction.user?._id;
-        document.getElementById('transactionType').value = transaction.type;
+        // document.getElementById('transactionType').value = transaction.type;
+        // document.getElementById("transactionType").value =
+        // BACKEND_TO_UI[transaction.type] || "deposit";
+        document.getElementById("transactionType").value = transaction.type;
+
+
         document.getElementById('amount').value = transaction.amount;
-        document.getElementById('status').value = transaction.status;
+        // document.getElementById('status').value = transaction.status;
         document.getElementById('description').value = transaction.description || '';
         document.getElementById('reference').value = transaction.reference || '';
         document.getElementById('transactionModal').classList.add('active');
@@ -1034,13 +1078,16 @@ async function editTransaction(id) {
 // Save transaction - ✅ FIXED WITH AUTH
 async function saveTransaction(event) {
     event.preventDefault();
-    
+    const uiType = document.getElementById('transactionType').value;
     const id = document.getElementById('transactionId').value;
     const data = {
         userId: document.getElementById('userId').value,
-        type: document.getElementById('transactionType').value,
+        // type: document.getElementById('transactionType').value,
+        // type: TYPE_TO_BACKEND[uiType],
+        type: uiType,
+
         amount: document.getElementById('amount').value,
-        status: document.getElementById('status').value,
+        // status: document.getElementById('status').value,
         description: document.getElementById('description').value,
         reference: document.getElementById('reference').value
     };
@@ -1094,14 +1141,16 @@ async function deleteTransaction(id) {
 
 function exportTransactions() {
     const csv = [
-        ['ID', 'User', 'Email', 'Type', 'Amount', 'Status', 'Date', 'Description', 'Reference'],
+        // ['ID', 'User', 'Email', 'Type', 'Amount', 'Status', 'Date', 'Description', 'Reference'],
+        ['ID', 'User', 'Email', 'Type', 'Amount', 'Date', 'Description', 'Reference'],
+
         ...filteredTransactions.map(txn => [
             txn.id || txn._id,
-            txn.userName || txn.user?.name || 'N/A',
-            txn.userEmail || txn.user?.email || 'N/A',
+            txn.userId?.name || txn.userId?.username || 'N/A',
+            txn.userId?.email || 'N/A',
             txn.type,
             txn.amount,
-            txn.status,
+            // txn.status,
             formatDate(txn.createdAt),
             txn.description || '',
             txn.reference || ''
