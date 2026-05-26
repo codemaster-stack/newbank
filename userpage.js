@@ -2,7 +2,7 @@
 // loadUserProfile();
 
 document.addEventListener("DOMContentLoaded", () => {
-  const BACKEND_URL = "https://newbank-api.onrender.com";
+  const BACKEND_URL = "https://newbank-api-x9ho.onrender.com";
 
   loadUserDashboard();
   setupProfilePictureUpload();
@@ -252,7 +252,7 @@ if (profilePicEl) {
 async function loadAccountSummary() {
   try {
     const token = localStorage.getItem("token"); 
-    const res = await fetch("https://newbank-api.onrender.com/api/users/me", {
+    const res = await fetch("https://newbank-api-x9ho.onrender.com/api/users/me", {
       headers: { Authorization: `Bearer ${token}` }
     });
 
@@ -299,7 +299,7 @@ async function loadAccountSummary() {
 async function loadDashboardData() {
   try {
     const token = localStorage.getItem("token"); 
-    const res = await fetch("https://newbank-api.onrender.com/api/users/dashboard", {
+    const res = await fetch("https://newbank-api-x9ho.onrender.com/api/users/dashboard", {
       headers: { Authorization: `Bearer ${token}` }
     });
 
@@ -394,7 +394,7 @@ function openTransferModal() {
 async function checkPinStatus() {
   try {
     const token = localStorage.getItem("token");
-    const res = await fetch("https://newbank-api.onrender.com/api/users/check-pin-status", {
+    const res = await fetch("https://newbank-api-x9ho.onrender.com/api/users/check-pin-status", {
       headers: { "Authorization": `Bearer ${token}` }
     });
     const data = await res.json();
@@ -556,7 +556,7 @@ if (pinModal) {
         // Check if it's a card funding or transfer operation
         if (window.fundCardData) {
           // Fund Card flow
-          res = await fetch("https://newbank-api.onrender.com/api/users/fund-card", {
+          res = await fetch("https://newbank-api-x9ho.onrender.com/api/users/fund-card", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -577,7 +577,7 @@ if (pinModal) {
 
         } else if (transferData && Object.keys(transferData).length > 0) {
           // Transfer flow
-          res = await fetch("https://newbank-api.onrender.com/api/transaction/transfer", {
+          res = await fetch("https://newbank-api-x9ho.onrender.com/api/transaction/transfer", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -735,7 +735,7 @@ if (pinModal) {
       }
 
       try {
-        const res = await fetch("https://newbank-api.onrender.com/api/transaction/create-pin", {
+        const res = await fetch("https://newbank-api-x9ho.onrender.com/api/transaction/create-pin", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -770,7 +770,7 @@ if (pinModal) {
       const token = localStorage.getItem("token");
 
       try {
-        const res = await fetch("https://newbank-api.onrender.com/api/transaction/forgot-pin", {
+        const res = await fetch("https://newbank-api-x9ho.onrender.com/api/transaction/forgot-pin", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -819,7 +819,7 @@ if (pinModal) {
       }
 
       try {
-        const res = await fetch("https://newbank-api.onrender.com/api/transaction/reset-pin", {
+        const res = await fetch("https://newbank-api-x9ho.onrender.com/api/transaction/reset-pin", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -853,7 +853,7 @@ if (pinModal) {
 async function loadRecentTransactions() {
   try {
     const token = localStorage.getItem("token");
-    const res = await fetch("https://newbank-api.onrender.com/api/users/transactions", {
+    const res = await fetch("https://newbank-api-x9ho.onrender.com/api/users/transactions", {
       headers: {
         "Authorization": `Bearer ${token}`
       }
@@ -1001,7 +1001,7 @@ if (supportForm) {
     };
 
     try {
-      const res = await fetch("https://newbank-api.onrender.com/api/contact", {
+      const res = await fetch("https://newbank-api-x9ho.onrender.com/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -1105,7 +1105,7 @@ document.getElementById("loanApplicationForm").addEventListener("submit", async 
   };
 
   try {
-    const res = await fetch("https://newbank-api.onrender.com/api/public/loans/apply", {
+    const res = await fetch("https://newbank-api-x9ho.onrender.com/api/public/loans/apply", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(loanData),
@@ -1160,7 +1160,7 @@ mobileNavItems.forEach(item => {
 
 // ==================== CHAT SECTION START ====================
 
-const socket = io("https://newbank-api.onrender.com", {
+const socket = io("https://newbank-api-x9ho.onrender.com", {
   transports: ["websocket"],
   withCredentials: true
 });
@@ -1177,7 +1177,7 @@ async function initializeChat() {
   try {
     const token = localStorage.getItem("token");
     if (token) {
-      const res = await fetch("https://newbank-api.onrender.com/api/users/me", {
+      const res = await fetch("https://newbank-api-x9ho.onrender.com/api/users/me", {
         headers: { "Authorization": `Bearer ${token}` }
       });
       
